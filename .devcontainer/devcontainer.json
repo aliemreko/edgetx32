@@ -1,0 +1,19 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the README at:
+// https://github.com/microsoft/vscode-dev-containers/tree/v0.187.0/containers/cpp
+{
+	"name": "edgetx-dev",
+	"image": "ghcr.io/edgetx/edgetx-dev:latest",
+	"runArgs": [
+		"--ipc=host"
+	],
+	// Add the IDs of extensions you want installed when the container is created.
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-vscode.cpptools"
+			]
+		}
+	},
+	// Post-create command to set up the environment
+	"postCreateCommand": "git submodule update --init --recursive && mkdir -p build && echo 'EdgeTX development environment ready!'"
+}

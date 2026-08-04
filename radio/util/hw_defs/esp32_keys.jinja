@@ -1,0 +1,45 @@
+//
+// WARNING: DO NOT EDIT — generated from target JSON hardware description
+//
+{% set hw_keys = keys | rejectattr('pin', 'none') | rejectattr('gpio', 'none') | list %}
+static inline void _init_keys()
+{
+{% for key in hw_keys %}
+  gpio_init(GPIO_PIN(GPIO, {{ key.pin }}), {{ 'GPIO_IN_PU' if key.active_low else 'GPIO_IN_PD' }}, GPIO_PIN_SPEED_LOW);
+{% endfor %}
+}
+
+static inline uint32_t _read_keys()
+{
+  uint32_t keys = 0;
+{% for key in hw_keys %}
+  if ({{'!' if key.active_low }}gpio_read(GPIO_PIN(GPIO, {{ key.pin }})))
+    keys |= (1 << {{ key.key }});
+{% endfor %}
+  return keys;
+}
+
+{% set hw_trims = trims | selectattr('dec', 'defined') | selectattr('inc', 'defined') | list %}
+static inline void _init_trims()
+{
+{% for trim in hw_trims %}
+  {% if trim.dec.pin is defined and trim.dec.pin %}
+  gpio_init(GPIO_PIN(GPIO, {{ trim.dec.pin }}), {{ 'GPIO_IN_PU' if trim.dec.active_low else 'GPIO_IN_PD' }}, GPIO_PIN_SPEED_LOW);
+  gpio_init(GPIO_PIN(GPIO, {{ trim.inc.pin }}), {{ 'GPIO_IN_PU' if trim.inc.active_low else 'GPIO_IN_PD' }}, GPIO_PIN_SPEED_LOW);
+  {% endif %}
+{% endfor %}
+}
+
+static inline uint32_t _read_trims()
+{
+  uint32_t trims = 0;
+{% for trim in hw_trims %}
+  {% if trim.dec.pin is defined and trim.dec.pin %}
+  if ({{'!' if trim.dec.active_low }}gpio_read(GPIO_PIN(GPIO, {{ trim.dec.pin }})))
+    trims |= (1 << {{ loop.index0 * 2 }});
+  if ({{'!' if trim.inc.active_low }}gpio_read(GPIO_PIN(GPIO, {{ trim.inc.pin }})))
+    trims |= (1 << {{ loop.index0 * 2 + 1 }});
+  {% endif %}
+{% endfor %}
+  return trims;
+}

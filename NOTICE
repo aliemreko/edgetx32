@@ -1,0 +1,19 @@
+# NOTICE
+
+EdgeTX32 is derived from EdgeTX / OpenTX lineage software.
+
+- Copyright (C) EdgeTX contributors and prior OpenTX / th9x / er9x / gruvin9x authors
+- Copyright (C) EdgeTX32 / ESP32 port contributors
+
+This program is free software; you can redistribute it and/or modify it under
+the terms of the GNU General Public License version 2 as published by the Free
+Software Foundation. See [LICENSE](LICENSE).
+
+## Third-party
+
+- **LVGL** — vendored under `radio/src/thirdparty/lvgl` (EdgeTX LVGL fork)
+- **Lua**, **FatFs**, **lz4**, **stb**, **uf2**, **AccessDenied** — see their trees
+- **ESP-IDF** / Espressif components — used at build time, not fully vendored here
+- STM32 HAL/CMSIS are **not** shipped in this ESP32-focused snapshot
+
+Upstream project: https://github.com/EdgeTX/edgetx

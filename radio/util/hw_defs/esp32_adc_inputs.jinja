@@ -1,0 +1,21 @@
+//
+// WARNING: DO NOT EDIT — generated from target JSON hardware description
+//
+{% set all = adc_inputs.inputs %}
+static const int _esp32_adc_gpios[] = {
+{% for input in all %}
+  {% if input.pin is defined and input.pin and input.pin != none %}
+  {{ input.pin }},
+  {% else %}
+  -1,
+  {% endif %}
+{% endfor %}
+};
+
+static const bool _esp32_adc_inverted[] = {
+{% for input in all %}
+  {{ 'true' if input.inverted else 'false' }},
+{% endfor %}
+};
+
+constexpr unsigned _esp32_adc_count = sizeof(_esp32_adc_gpios) / sizeof(_esp32_adc_gpios[0]);

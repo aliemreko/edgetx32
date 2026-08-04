@@ -1,0 +1,15 @@
+//
+// WARNING: DO NOT EDIT — generated from target JSON hardware description
+//
+static inline void _init_switches()
+{
+{% for sw in switches %}
+  {% if sw.pin is defined and sw.pin %}
+  gpio_init(GPIO_PIN(GPIO, {{ sw.pin }}), GPIO_IN_PU, GPIO_PIN_SPEED_LOW);
+  {% endif %}
+  {% if sw.pin_high is defined and sw.pin_high %}
+  gpio_init(GPIO_PIN(GPIO, {{ sw.pin_high }}), GPIO_IN_PU, GPIO_PIN_SPEED_LOW);
+  gpio_init(GPIO_PIN(GPIO, {{ sw.pin_low }}), GPIO_IN_PU, GPIO_PIN_SPEED_LOW);
+  {% endif %}
+{% endfor %}
+}

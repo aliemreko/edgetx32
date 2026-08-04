@@ -1,0 +1,2 @@
+# Submodules are vendored inline for the ESP32 fork snapshot.
+# See radio/src/thirdparty/README.esp32.md

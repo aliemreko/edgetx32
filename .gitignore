@@ -1,0 +1,36 @@
+/.*project
+/.settings
+/.autotools
+/*.user
+/*.user.*
+/doc/
+/build*/
+/cmake-build-*/
+/debian/
+/*.vscode
+radio/src/tests/googletest*
+radio/src/tests/gtest*.tar.gz
+.editorconfig
+.cache
+compile_commands.json
+/ys_Doc
+/.idea
+/.vs
+CMakeUserPresets.json
+.DS_Store
+_deps
+_wasi_sdk_fetch
+*.pyc
+
+# MkDocs
+/site/
+
+output/
+.devcontainer/devcontainer-lock.json
+
+# ESP-IDF
+platforms/esp32/build/
+platforms/esp32/sdkconfig
+platforms/esp32/sdkconfig.old
+platforms/esp32/dependencies.lock
+platforms/esp32/managed_components/

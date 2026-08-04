@@ -1,0 +1,333 @@
+/*
+ * Copyright (C) EdgeTX
+ *
+ * Based on code named
+ *   opentx - https://github.com/opentx/opentx
+ *   th9x - http://code.google.com/p/th9x
+ *   er9x - http://code.google.com/p/er9x
+ *   gruvin9x - http://code.google.com/p/gruvin9x
+ *
+ * License GPLv2: http://www.gnu.org/licenses/gpl-2.0.html
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as
+ * published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ */
+
+#include "stm32_hal.h"
+#include "stm32_hal_ll.h"
+#include "stm32_gpio.h"
+#include "stm32_spi.h"
+#include "vs1053b.h"
+
+#include "hal/adc_driver.h"
+#include "hal/trainer_driver.h"
+#include "hal/switch_driver.h"
+#include "hal/rotary_encoder.h"
+#include "hal/usb_driver.h"
+#include "hal/gpio.h"
+#include "hal/rgbleds.h"
+
+#include "board.h"
+#include "boards/generic_stm32/module_ports.h"
+#include "boards/generic_stm32/intmodule_heartbeat.h"
+#include "boards/generic_stm32/analog_inputs.h"
+#include "boards/generic_stm32/rgb_leds.h"
+
+#include "timers_driver.h"
+#include "dataconstants.h"
+#include "edgetx_types.h"
+#include "globals.h"
+#include "sdcard.h"
+#include "debug.h"
+
+#include <string.h>
+
+#if defined(CSD203_SENSOR)
+  #include "csd203_sensor.h"
+#endif
+
+#if defined(IMU) && defined(IMU_I2C_BUS) && \
+    (defined(IMU_I2C_ADDRESS) || defined(IMU_ICM42627) || \
+     defined(IMU_SC7U22) || defined(IMU_LSM6DS33))
+  #define HAS_IMU
+  #include "gyro.h"
+  #include "stm32_i2c_driver.h"
+  #if defined(IMU_ICM42627)
+  #include "drivers/icm42627.h"
+  #endif
+  #if defined(IMU_SC7U22)
+  #include "drivers/sc7u22.h"
+  #endif
+  #if defined(IMU_LSM6DS33) || \
+      (!defined(IMU_ICM42627) && !defined(IMU_SC7U22) && defined(IMU_I2C_ADDRESS))
+  #include "drivers/lsm6ds.h"
+  #endif
+#endif
+
+HardwareOptions hardwareOptions;
+bool boardBacklightOn = false;
+
+#if defined(VIDEO_SWITCH) || (defined(BLUETOOTH) && defined(BOOT))
+
+#if defined(VIDEO_SWITCH)
+#include "videoswitch_driver.h"
+#endif
+
+void boardBLEarlyInit()
+{
+#if defined(VIDEO_SWITCH)
+  videoSwitchInit();
+#endif
+
+#if defined(BLUETOOTH)
+  // Disable the BT module so it will be detected on firmware start
+#if defined(BT_EN_GPIO)
+  gpio_init(BT_EN_GPIO, GPIO_OUT, GPIO_PIN_SPEED_LOW);
+  gpio_write(BT_EN_GPIO, 1);
+#endif
+#if defined(BT_PWR_GPIO)
+  gpio_init(BT_PWR_GPIO, GPIO_OUT, GPIO_PIN_SPEED_LOW);
+  gpio_set(BT_PWR_GPIO);
+#endif
+#endif
+}
+#endif
+
+extern "C" void SDRAM_Init();
+
+void boardBLPreJump()
+{
+  SDRAM_Init();
+}
+
+void boardBLInit()
+{
+  rotaryEncoderInit();
+  SDRAM_Init();
+}
+
+#if !defined(BOOT)
+#include "edgetx.h"
+
+#if defined(PCBX12S)
+static void audio_set_rst_pin(bool set)
+{
+  gpio_write(AUDIO_RST_GPIO, set);
+}
+
+void audioInit()
+{
+  static stm32_spi_t spi_dev = {
+      .SPIx = AUDIO_SPI,
+      .SCK = AUDIO_SPI_SCK_GPIO,
+      .MISO = AUDIO_SPI_MISO_GPIO,
+      .MOSI = AUDIO_SPI_MOSI_GPIO,
+      .CS = AUDIO_CS_GPIO,
+  };
+
+  static vs1053b_t vs1053 = {
+      .spi = &spi_dev,
+      .XDCS = AUDIO_XDCS_GPIO,
+      .DREQ = AUDIO_DREQ_GPIO,
+      .set_rst_pin = audio_set_rst_pin,
+  };
+
+  gpio_init(AUDIO_RST_GPIO, GPIO_OUT, 0);
+  gpio_init(AUDIO_SHUTDOWN_GPIO, GPIO_OUT, 0);
+  gpio_set(AUDIO_SHUTDOWN_GPIO);
+
+  vs1053b_init(&vs1053);
+}
+#endif
+
+#if defined(HAS_IMU)
+static const etx_imu_t _imu_candidates[] = {
+#if defined(IMU_ICM42627)
+  { &imu_icm42627_driver, IMU_I2C_BUS, ICM42627_I2C_BASE_ADDR },
+  { &imu_icm42627_driver, IMU_I2C_BUS, ICM42627_I2C_BASE_ADDR + 1 },
+#endif
+#if defined(IMU_SC7U22)
+  { &imu_sc7u22_driver, IMU_I2C_BUS, SC7U22_I2C_BASE_ADDR },
+  { &imu_sc7u22_driver, IMU_I2C_BUS, SC7U22_I2C_BASE_ADDR + 1 },
+#endif
+#if defined(IMU_LSM6DS33) || \
+    (!defined(IMU_ICM42627) && !defined(IMU_SC7U22) && defined(IMU_I2C_ADDRESS))
+  { &imu_lsm6ds_driver, IMU_I2C_BUS, IMU_I2C_ADDRESS },
+#endif
+};
+
+static void gyroInit()
+{
+  gyroStart(imuDetect(_imu_candidates, DIM(_imu_candidates)));
+}
+
+#endif
+
+void boardInit()
+{
+  delaysInit();
+  timersInit();
+  __enable_irq();
+
+#if defined(RADIO_FAMILY_T16)
+  void board_set_bor_level();
+  board_set_bor_level();
+#endif
+
+  usbInit();
+
+#if defined(MANUFACTURER_JUMPER) && defined(FUNCTION_SWITCHES) && \
+    !defined(DEBUG)
+  // This is needed to prevent radio from starting when usb is plugged to charge
+  if (usbPlugged()) {
+#if defined(AUDIO_MUTE_GPIO)
+    // Charging can make a buzzing noise
+    gpio_init(AUDIO_MUTE_GPIO, GPIO_OUT, GPIO_PIN_SPEED_LOW);
+    gpio_set(AUDIO_MUTE_GPIO);
+#endif
+    while (usbPlugged()) {
+      delay_ms(1000);
+    }
+    pwrOff();
+    // Wait power to drain
+    while (true) {
+    }
+  }
+#endif
+
+  pwrInit();
+  pwrOn();
+
+  TRACE("\nHorus board started :)");
+  TRACE("RCC->CSR = %08x", RCC->CSR);
+
+  boardInitModulePorts();
+  board_trainer_init();
+
+  audioInit();
+  keysInit();
+  switchInit();
+  rotaryEncoderInit();
+  gimbalsDetect();
+
+  if (!adcInit(&_adc_driver)) {
+    TRACE("adcInit failed");
+  }
+
+
+#if defined(HARDWARE_TOUCH) && !defined(SIMU)
+  touchPanelInit();
+#endif
+
+#if defined(CSD203_SENSOR)
+  initCSD203();
+#endif
+
+  hapticInit();
+
+#if defined(LED_STRIP_GPIO)
+  rgbLedInit();
+#endif
+
+#if defined(BLUETOOTH)
+  bluetoothInit(BLUETOOTH_DEFAULT_BAUDRATE, true);
+#endif
+
+#if defined(VIDEO_SWITCH)
+  videoSwitchInit();
+#endif
+
+#if defined(DEBUG)
+  // DBGMCU_APB1PeriphConfig(DBGMCU_IWDG_STOP|DBGMCU_TIM1_STOP|DBGMCU_TIM2_STOP|DBGMCU_TIM3_STOP|DBGMCU_TIM4_STOP|DBGMCU_TIM5_STOP|DBGMCU_TIM6_STOP|DBGMCU_TIM7_STOP|DBGMCU_TIM8_STOP|DBGMCU_TIM9_STOP|DBGMCU_TIM10_STOP|DBGMCU_TIM11_STOP|DBGMCU_TIM12_STOP|DBGMCU_TIM13_STOP|DBGMCU_TIM14_STOP, ENABLE);
+#endif
+
+  ledInit();
+
+#if defined(USB_CHARGER)
+  usbChargerInit();
+#endif
+
+#if defined(RTCLOCK)
+  ledRed();
+  rtcInit(); // RTC must be initialized before rambackupRestore() is called
+#endif
+
+#if !defined(POWER_LED_BLUE)
+  ledBlue();
+#else
+  #if defined(LED_GREEN_GPIO)
+  ledGreen();
+  #endif
+#endif
+
+#if defined(HAS_IMU)
+  gyroInit();
+#endif
+}
+#endif
+
+extern void rtcDisableBackupReg();
+
+void boardOff()
+{
+#if defined(LED_STRIP_GPIO) && !defined(BOOT)
+  rgbLedStop();
+  rgbLedClearAll();
+#endif
+
+#if STATUS_LEDS && !defined(BOOT)
+  ledOff();
+#endif
+  backlightEnable(0);
+
+  while (pwrPressed()) {
+    WDG_RESET();
+  }
+
+  SysTick->CTRL = 0; // turn off systick
+
+#if defined(PCBX12S)
+  // Shutdown the Audio amp
+  gpio_init(AUDIO_SHUTDOWN_GPIO, GPIO_OUT, GPIO_PIN_SPEED_LOW);
+  gpio_clear(AUDIO_SHUTDOWN_GPIO);
+#endif
+
+  // Shutdown the Haptic
+  hapticDone();
+
+  rtcDisableBackupReg();
+  // RTC->BKP0R = SHUTDOWN_REQUEST;
+
+  pwrOff();
+
+  // We reach here only in forced power situations, such as hw-debugging with external power
+  // Enter STM32 stop mode / deep-sleep
+  // Code snippet from ST Nucleo PWR_EnterStopMode example
+#define PDMode             0x00000000U
+#if defined(PWR_CR_MRUDS) && defined(PWR_CR_LPUDS) && defined(PWR_CR_FPDS)
+  MODIFY_REG(PWR->CR, (PWR_CR_PDDS | PWR_CR_LPDS | PWR_CR_FPDS | PWR_CR_LPUDS | PWR_CR_MRUDS), PDMode);
+#elif defined(PWR_CR_MRLVDS) && defined(PWR_CR_LPLVDS) && defined(PWR_CR_FPDS)
+  MODIFY_REG(PWR->CR, (PWR_CR_PDDS | PWR_CR_LPDS | PWR_CR_FPDS | PWR_CR_LPLVDS | PWR_CR_MRLVDS), PDMode);
+#else
+  MODIFY_REG(PWR->CR, (PWR_CR_PDDS| PWR_CR_LPDS), PDMode);
+#endif /* PWR_CR_MRUDS && PWR_CR_LPUDS && PWR_CR_FPDS */
+
+/* Set SLEEPDEEP bit of Cortex System Control Register */
+  SET_BIT(SCB->SCR, ((uint32_t)SCB_SCR_SLEEPDEEP_Msk));
+
+  // To avoid HardFault at return address, end in an endless loop
+  while (1) {
+
+  }
+}
+
+bool isBacklightEnabled()
+{
+  return boardBacklightOn;
+}

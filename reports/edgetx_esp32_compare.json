@@ -1,0 +1,496 @@
+{
+  "meta": {
+    "title": "EdgeTX vs EdgeTX-ESP32 Side-by-Side Simulation Report",
+    "generated_utc": "2026-08-03 23:14:07 UTC",
+    "upstream_path": "/tmp/edgetx-src",
+    "esp32_path": "/workspace/edgetx-esp32",
+    "note": "Host-side simulation & static analysis. Device flashing / full LVGL UI runtime was not executed in this CI environment (no ESP-IDF / no radio HW)."
+  },
+  "sizes": {
+    "upstream": {
+      "tree_mb": 302.9,
+      "radio_cpp": 704,
+      "radio_h": 1041,
+      "pulses_cpp": 17,
+      "telemetry_cpp": 15,
+      "targets": [
+        "taranis",
+        "tx15",
+        "t22",
+        "horus",
+        "common",
+        "pa01",
+        "tx16smk3",
+        "simu",
+        "c14",
+        "pl18",
+        "stm32h7s78-dk",
+        "st16",
+        "t15pro"
+      ]
+    },
+    "esp32": {
+      "tree_mb": 121.0,
+      "radio_cpp": 736,
+      "radio_h": 735,
+      "pulses_cpp": 17,
+      "telemetry_cpp": 15,
+      "targets": [
+        "taranis",
+        "tx15",
+        "t22",
+        "horus",
+        "common",
+        "pa01",
+        "tx16smk3",
+        "simu",
+        "c14",
+        "pl18",
+        "esp32s3",
+        "stm32h7s78-dk",
+        "st16",
+        "t15pro"
+      ]
+    }
+  },
+  "hal_coverage": {
+    "upstream_tx15_like": {
+      "gpio_driver.cpp": true,
+      "adc_driver.cpp": true,
+      "serial_driver.cpp": true,
+      "module_ports.cpp": true,
+      "mixer_scheduler_driver.cpp": true,
+      "lcd_driver.cpp": true,
+      "audio_driver.cpp": true,
+      "haptic_driver.cpp": true,
+      "sd_diskio.cpp": true,
+      "key_driver.cpp": true,
+      "switch_driver.cpp": true,
+      "board.cpp": true
+    },
+    "esp32s3": {
+      "gpio_driver.cpp": true,
+      "adc_driver.cpp": true,
+      "serial_driver.cpp": true,
+      "module_ports.cpp": true,
+      "mixer_scheduler_driver.cpp": true,
+      "lcd_driver.cpp": true,
+      "audio_driver.cpp": true,
+      "haptic_driver.cpp": true,
+      "sd_diskio.cpp": true,
+      "key_driver.cpp": true,
+      "switch_driver.cpp": true,
+      "board.cpp": true
+    }
+  },
+  "features": [
+    {
+      "feature": "Color LCD / LVGL UI",
+      "upstream": "Yes (STM32 LTDC/DMA2D)",
+      "esp32": "Yes (SPI LCD + PSRAM FB)",
+      "notes": "GUI_DIR=colorlcd"
+    },
+    {
+      "feature": "Mixer engine",
+      "upstream": "Yes",
+      "esp32": "Yes (portable)",
+      "notes": "Same core sources"
+    },
+    {
+      "feature": "Logical switches / SF",
+      "upstream": "Yes",
+      "esp32": "Yes",
+      "notes": ""
+    },
+    {
+      "feature": "Lua / Lua mixer",
+      "upstream": "Yes",
+      "esp32": "Yes (flagged ON)",
+      "notes": "Needs full IDF link"
+    },
+    {
+      "feature": "YAML models on SD",
+      "upstream": "Yes",
+      "esp32": "Yes (SPI SD diskio)",
+      "notes": ""
+    },
+    {
+      "feature": "Internal CRSF/ELRS",
+      "upstream": "Yes",
+      "esp32": "Yes (UART1 module_port)",
+      "notes": ""
+    },
+    {
+      "feature": "External module bay",
+      "upstream": "Yes",
+      "esp32": "Yes (UART2)",
+      "notes": "Multi/Ghost/PXX via portable pulses/"
+    },
+    {
+      "feature": "Touch UI",
+      "upstream": "Yes (GT911 etc.)",
+      "esp32": "Stub + I2C hooks",
+      "notes": "Bring-up pending panel"
+    },
+    {
+      "feature": "Audio 32 kHz",
+      "upstream": "Yes (I2S/DAC)",
+      "esp32": "Yes (I2S std)",
+      "notes": ""
+    },
+    {
+      "feature": "Haptic PWM",
+      "upstream": "Yes",
+      "esp32": "Yes (LEDC)",
+      "notes": ""
+    },
+    {
+      "feature": "USB CDC/MSC/HID",
+      "upstream": "STM32 USB lib",
+      "esp32": "TinyUSB-ready stubs",
+      "notes": "sdkconfig enable"
+    },
+    {
+      "feature": "WiFi telemetry",
+      "upstream": "No",
+      "esp32": "Yes (UDP :9070)",
+      "notes": "ESP32 enhancement"
+    },
+    {
+      "feature": "BLE trainer",
+      "upstream": "BT module (limited)",
+      "esp32": "NimBLE stub",
+      "notes": "ESP32 enhancement"
+    },
+    {
+      "feature": "Dual-core affinity",
+      "upstream": "N/A (single MCU core app)",
+      "esp32": "Yes (core0 UI / core1 mixer)",
+      "notes": ""
+    },
+    {
+      "feature": "PSRAM framebuffer",
+      "upstream": "SDRAM on H7",
+      "esp32": "SPIRAM",
+      "notes": ""
+    },
+    {
+      "feature": "Companion / simu host",
+      "upstream": "Full SDL simu",
+      "esp32": "HAL host stubs + hwgen",
+      "notes": "Full SDL UI not yet"
+    },
+    {
+      "feature": "Production radio HW",
+      "upstream": "Many OEM boards",
+      "esp32": "DIY reference pinout",
+      "notes": "IO expander recommended"
+    },
+    {
+      "feature": "Build system",
+      "upstream": "CMake + ARM GCC 14.2",
+      "esp32": "ESP-IDF + CMake PCB=ESP32S3",
+      "notes": ""
+    },
+    {
+      "feature": "RTOS",
+      "upstream": "Vendored FreeRTOS",
+      "esp32": "ESP-IDF FreeRTOS",
+      "notes": "RTOS_START no-op on ESP"
+    },
+    {
+      "feature": "MCU check / DBGMCU",
+      "upstream": "Yes",
+      "esp32": "Disabled / skipped",
+      "notes": "DISABLE_MCUCHECK"
+    }
+  ],
+  "checks": [
+    {
+      "name": "hwgen:hal_settings",
+      "side": "upstream",
+      "ok": true,
+      "detail": "103 lines",
+      "ms": 168.2088530000101
+    },
+    {
+      "name": "hwgen:hal_keys",
+      "side": "upstream",
+      "ok": true,
+      "detail": "41 lines",
+      "ms": 158.70742399999926
+    },
+    {
+      "name": "hwgen:hal_adc_inputs",
+      "side": "upstream",
+      "ok": true,
+      "detail": "44 lines",
+      "ms": 163.08924600002683
+    },
+    {
+      "name": "hwgen:yaml_inputs",
+      "side": "upstream",
+      "ok": true,
+      "detail": "26 lines",
+      "ms": 157.80197499998394
+    },
+    {
+      "name": "hwgen:lua_keys",
+      "side": "upstream",
+      "ok": true,
+      "detail": "74 lines",
+      "ms": 162.0196250000845
+    },
+    {
+      "name": "hwgen:simu_switches",
+      "side": "upstream",
+      "ok": true,
+      "detail": "24 lines",
+      "ms": 158.90783500003636
+    },
+    {
+      "name": "hwgen:stm32_keys",
+      "side": "upstream",
+      "ok": true,
+      "detail": "69 lines",
+      "ms": 160.48059499996725
+    },
+    {
+      "name": "hwgen:stm32_adc_inputs",
+      "side": "upstream",
+      "ok": true,
+      "detail": "166 lines",
+      "ms": 163.04832699995586
+    },
+    {
+      "name": "hwgen:hal_settings",
+      "side": "esp32",
+      "ok": true,
+      "detail": "47 lines",
+      "ms": 165.18644299992502
+    },
+    {
+      "name": "hwgen:hal_keys",
+      "side": "esp32",
+      "ok": true,
+      "detail": "41 lines",
+      "ms": 157.53140300000723
+    },
+    {
+      "name": "hwgen:hal_adc_inputs",
+      "side": "esp32",
+      "ok": true,
+      "detail": "44 lines",
+      "ms": 156.84872499991798
+    },
+    {
+      "name": "hwgen:yaml_inputs",
+      "side": "esp32",
+      "ok": true,
+      "detail": "28 lines",
+      "ms": 155.1039480000327
+    },
+    {
+      "name": "hwgen:lua_keys",
+      "side": "esp32",
+      "ok": true,
+      "detail": "74 lines",
+      "ms": 160.20849100004853
+    },
+    {
+      "name": "hwgen:simu_switches",
+      "side": "esp32",
+      "ok": true,
+      "detail": "26 lines",
+      "ms": 151.95952900000975
+    },
+    {
+      "name": "hwgen:esp32_keys",
+      "side": "esp32",
+      "ok": true,
+      "detail": "43 lines",
+      "ms": 157.540283000003
+    },
+    {
+      "name": "hwgen:esp32_adc_inputs",
+      "side": "esp32",
+      "ok": true,
+      "detail": "26 lines",
+      "ms": 155.22188800002823
+    },
+    {
+      "name": "hwgen:esp32_switches",
+      "side": "esp32",
+      "ok": true,
+      "detail": "15 lines",
+      "ms": 155.55593400006273
+    },
+    {
+      "name": "host_compile:gpio_driver.cpp",
+      "side": "esp32",
+      "ok": true,
+      "detail": "object 10392B",
+      "ms": 165.00067399999807
+    },
+    {
+      "name": "host_compile:delays_driver.cpp",
+      "side": "esp32",
+      "ok": true,
+      "detail": "object 1600B",
+      "ms": 12.746032999984891
+    },
+    {
+      "name": "source_present:simu/adc_driver.cpp",
+      "side": "upstream",
+      "ok": true,
+      "detail": "SDL simu HAL present",
+      "ms": 0
+    },
+    {
+      "name": "verify_hw_gen.sh",
+      "side": "esp32",
+      "ok": true,
+      "detail": "OK hal_settings.h\nOK hal_keys.inc\nOK hal_adc_inputs.inc\nOK simu_switches.inc\nOK esp32_keys.inc\nOK esp32_switches.inc\nOK esp32_adc_inputs.inc\nOK yaml_inputs.inc\nOK lua_keys.inc\nOK lua_inputs.inc\nOK lua_mixsrc.inc\nOK hal_keys_lock.h\nOK host gpio_driver.o\nAll ESP32 hardware-definition checks passed.\n",
+      "ms": 1998.6666499999046
+    },
+    {
+      "name": "cmake_native_configure_TX15",
+      "side": "upstream",
+      "ok": false,
+      "detail": "+: No such file or directory\n    c++: error: linker command failed with exit code 1 (use -v to see invocation)\n    gmake[1]: *** [CMakeFiles/cmTC_967fc.dir/build.make:100: cmTC_967fc] Error 1\n    gmake[1]: Leaving directory '/tmp/etx-compare/upstream-native/CMakeFiles/CMakeScratch/TryCompile-Oxyh5Y'\n    gmake: *** [Makefile:127: cmTC_967fc/fast] Error 2\n    \n    \n\n  \n\n  CMake will not be able to correctly generate this project.\nCall Stack (most recent call first):\n  CMakeLists.txt:3 (project)\n\n\n",
+      "ms": 367.3749700000144
+    }
+  ],
+  "summary": {
+    "upstream": {
+      "checks_total": 10,
+      "checks_ok": 9,
+      "checks_fail": 1,
+      "pass_rate_pct": 90.0
+    },
+    "esp32": {
+      "checks_total": 12,
+      "checks_ok": 12,
+      "checks_fail": 0,
+      "pass_rate_pct": 100.0
+    }
+  },
+  "benchmarks": [
+    {
+      "name": "mixer_like",
+      "side": "upstream",
+      "iterations": 200000,
+      "elapsed_s": 0.030902285,
+      "ops_per_s": 6472013.315520195,
+      "notes": "32ch/64mix @ host -O3 (same algorithm both sides)"
+    },
+    {
+      "name": "mixer_like",
+      "side": "esp32",
+      "iterations": 200000,
+      "elapsed_s": 0.030955598,
+      "ops_per_s": 6460866.948847184,
+      "notes": "32ch/64mix @ host -O3 (same algorithm both sides)"
+    },
+    {
+      "name": "adc_jitter_filter",
+      "side": "upstream",
+      "iterations": 1000000,
+      "elapsed_s": 0.001349054,
+      "ops_per_s": 741260171.9427096,
+      "notes": "EdgeTX-style EMA"
+    },
+    {
+      "name": "adc_jitter_filter",
+      "side": "esp32",
+      "iterations": 1000000,
+      "elapsed_s": 0.001379876,
+      "ops_per_s": 724702799.3819735,
+      "notes": "EdgeTX-style EMA"
+    },
+    {
+      "name": "gpio_toggle_host",
+      "side": "esp32",
+      "iterations": 5000000,
+      "elapsed_s": 0.01536614,
+      "ops_per_s": 325390761.7658045,
+      "notes": "host stub map<>"
+    },
+    {
+      "name": "mixer_scheduler_rate",
+      "side": "upstream",
+      "iterations": 250,
+      "elapsed_s": 0.004,
+      "ops_per_s": 250.0,
+      "notes": "configured period 4000 us \u2192 250.0 Hz"
+    },
+    {
+      "name": "mixer_scheduler_rate",
+      "side": "esp32",
+      "iterations": 250,
+      "elapsed_s": 0.004,
+      "ops_per_s": 250.0,
+      "notes": "configured period 4000 us \u2192 250.0 Hz"
+    }
+  ],
+  "theoretical_perf": [
+    {
+      "metric": "CPU",
+      "upstream_tx15": "STM32H750 ~400\u2013480 MHz Cortex-M7",
+      "esp32s3": "Dual Xtensa LX7 up to 240 MHz",
+      "winner": "Upstream (single-thread DSP)"
+    },
+    {
+      "metric": "RAM for UI",
+      "upstream_tx15": "SDRAM (MBs)",
+      "esp32s3": "PSRAM (typically 8 MB octal)",
+      "winner": "Tie / depends on module"
+    },
+    {
+      "metric": "Mixer determinism",
+      "upstream_tx15": "HW timer IRQ + NVIC priorities",
+      "esp32s3": "gptimer ISR + core-1 pin",
+      "winner": "Upstream more battle-tested"
+    },
+    {
+      "metric": "Connectivity",
+      "upstream_tx15": "Optional BT module",
+      "esp32s3": "WiFi + BLE on-die",
+      "winner": "ESP32"
+    },
+    {
+      "metric": "CRSF baud (400k\u2013921k)",
+      "upstream_tx15": "USART+DMA proven",
+      "esp32s3": "UART driver wired (DMA via IDF)",
+      "winner": "Upstream maturity"
+    },
+    {
+      "metric": "Power / battery radios",
+      "upstream_tx15": "Production PMIC paths",
+      "esp32s3": "DIY latch GPIO",
+      "winner": "Upstream"
+    },
+    {
+      "metric": "DIY cost / availability",
+      "upstream_tx15": "Full radio BOM",
+      "esp32s3": "DevKit + modules",
+      "winner": "ESP32"
+    }
+  ],
+  "runtime_readiness": {
+    "upstream": {
+      "simu_sources": true,
+      "native_cmake": false,
+      "production_maturity": "High",
+      "esp32_binary": false
+    },
+    "esp32": {
+      "hal_host_stubs": true,
+      "hw_json_generators": true,
+      "idf_project_present": true,
+      "idf_full_link_in_this_env": false,
+      "production_maturity": "Early / bring-up",
+      "wifi_ble_extras": true
+    }
+  }
+}
