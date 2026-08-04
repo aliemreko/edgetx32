@@ -198,11 +198,44 @@ def build(report: dict, out: Path):
     chart_pass = REPORT_DIR / "compare_pass_rate.png"
     chart_mixer = REPORT_DIR / "compare_mixer.png"
     chart_hal = REPORT_DIR / "compare_hal.png"
+    chart_jitter = REPORT_DIR / "compare_scheduler_jitter.png"
+    chart_thru = REPORT_DIR / "compare_sim_throughput.png"
+    chart_loc = REPORT_DIR / "compare_module_loc.png"
     if chart_pass.exists():
         story.append(Spacer(1, 6))
         story.append(Image(str(chart_pass), width=160 * mm, height=78 * mm))
     if chart_hal.exists():
         story.append(Image(str(chart_hal), width=160 * mm, height=78 * mm))
+
+    derived = report.get("derived") or {}
+    if derived.get("mixer_headroom_x"):
+        story.append(Paragraph("1.1 Mixer simulation headroom @ 250 Hz", st["h2"]))
+        h_rows = [
+            [
+                cell("Profile", st["small"]),
+                cell("Upstream ×", st["small"]),
+                cell("EdgeTX32 ×", st["small"]),
+            ]
+        ]
+        for prof, sides in derived["mixer_headroom_x"].items():
+            h_rows.append(
+                [
+                    cell(prof, st["small"]),
+                    cell(str(sides.get("upstream")), st["small"]),
+                    cell(str(sides.get("esp32")), st["small"]),
+                ]
+            )
+        story.append(table(h_rows, [40 * mm, 60 * mm, 60 * mm]))
+        if derived.get("scheduler_miss_pct"):
+            story.append(
+                Paragraph(
+                    f"Scheduler deadline-miss model: upstream "
+                    f"{derived['scheduler_miss_pct']['upstream']}% · "
+                    f"EdgeTX32 {derived['scheduler_miss_pct']['esp32']}% "
+                    f"(1-core UI interference vs dual-core pin).",
+                    st["body"],
+                )
+            )
 
     # Verdict box
     story.append(Paragraph("Verdict", st["h2"]))
@@ -260,14 +293,15 @@ def build(report: dict, out: Path):
         )
     story.append(table(chk_rows, [45 * mm, 20 * mm, 15 * mm, 18 * mm, 77 * mm]))
 
-    # Benchmarks
+    # Benchmarks / simulations
     story.append(PageBreak())
-    story.append(Paragraph("5. Performance benchmarks (host)", st["h1"]))
+    story.append(Paragraph("5. Simulations & host benchmarks", st["h1"]))
     story.append(
         Paragraph(
-            "Mixer/ADC ölçümleri her iki taraf için aynı C++ algoritmasıyla host CPU’da koşturuldu "
-            "(MCU farkını değil, yazılım yükü eşitliğini gösterir). GPIO ölçümü ESP32 host stub’ına özgüdür. "
-            "Teorik MCU karşılaştırması bir sonraki tablodadır.",
+            "Python simulations exercise mixer (light/medium/heavy), logical switches, CRSF CRC, "
+            "ADC EMA, UI+mixer concurrency, and a scheduler jitter model. Equal ops/s across sides "
+            "is expected on the same host CPU — they validate algorithmic parity. Dual-core / jitter "
+            "rows illustrate architecture, not chip MHz. Optional C++ benches appear when a compiler is present.",
             st["body"],
         )
     )
@@ -284,9 +318,26 @@ def build(report: dict, out: Path):
             ]
         )
     story.append(table(b_rows, [32 * mm, 18 * mm, 22 * mm, 25 * mm, 28 * mm, 50 * mm]))
-    if chart_mixer.exists():
-        story.append(Spacer(1, 4))
-        story.append(Image(str(chart_mixer), width=160 * mm, height=78 * mm))
+    for ch in (chart_mixer, chart_jitter, chart_thru, chart_loc):
+        if ch.exists():
+            story.append(Spacer(1, 4))
+            story.append(Image(str(ch), width=160 * mm, height=72 * mm))
+
+    hw = report.get("hw_defs") or {}
+    if hw:
+        story.append(Paragraph("5.2 Hardware JSON complexity", st["h2"]))
+        hw_rows = [[cell("Board", st["small"]), cell("ADC inputs", st["small"]), cell("Keys", st["small"]), cell("Switches", st["small"])]]
+        for label, key in (("Upstream TX15", "upstream_tx15"), ("EdgeTX32 ESP32-S3", "esp32s3")):
+            d = hw.get(key) or {}
+            hw_rows.append(
+                [
+                    cell(label, st["small"]),
+                    cell(str(d.get("adc_inputs", "—")), st["small"]),
+                    cell(str(d.get("keys", "—")), st["small"]),
+                    cell(str(d.get("switches", "—")), st["small"]),
+                ]
+            )
+        story.append(table(hw_rows, [55 * mm, 40 * mm, 40 * mm, 40 * mm]))
 
     story.append(Paragraph("5.1 Theoretical MCU / platform performance", st["h2"]))
     t_rows = [[cell("Metric", st["small"]), cell("Upstream TX15-class", st["small"]), cell("ESP32-S3", st["small"]), cell("Edge", st["small"])]]

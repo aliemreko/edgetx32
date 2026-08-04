@@ -1,56 +1,266 @@
 {
   "meta": {
-    "title": "EdgeTX vs EdgeTX-ESP32 Side-by-Side Simulation Report",
-    "generated_utc": "2026-08-03 23:14:07 UTC",
-    "upstream_path": "/tmp/edgetx-src",
-    "esp32_path": "/workspace/edgetx-esp32",
-    "note": "Host-side simulation & static analysis. Device flashing / full LVGL UI runtime was not executed in this CI environment (no ESP-IDF / no radio HW)."
+    "title": "EdgeTX vs EdgeTX32 Side-by-Side Simulation Report",
+    "generated_utc": "2026-08-04 12:54:08 UTC",
+    "upstream_path": "C:\\Users\\os\\AppData\\Local\\edgetx-src",
+    "esp32_path": "C:\\Users\\os\\Desktop\\ekrantest-cursor-edgetx32-public-bd01",
+    "note": "Host-side simulations & static analysis on one PC. Python models exercise mixer/LS/CRSF/ADC/scheduler logic. Equal ops/s across sides is expected (same host CPU). Dual-core / jitter models illustrate architectural differences, not on-device MHz.",
+    "charts": [
+      "C:\\Users\\os\\Desktop\\ekrantest-cursor-edgetx32-public-bd01\\reports\\compare_pass_rate.png",
+      "C:\\Users\\os\\Desktop\\ekrantest-cursor-edgetx32-public-bd01\\reports\\compare_mixer.png",
+      "C:\\Users\\os\\Desktop\\ekrantest-cursor-edgetx32-public-bd01\\reports\\compare_hal.png",
+      "C:\\Users\\os\\Desktop\\ekrantest-cursor-edgetx32-public-bd01\\reports\\compare_scheduler_jitter.png",
+      "C:\\Users\\os\\Desktop\\ekrantest-cursor-edgetx32-public-bd01\\reports\\compare_sim_throughput.png",
+      "C:\\Users\\os\\Desktop\\ekrantest-cursor-edgetx32-public-bd01\\reports\\compare_module_loc.png"
+    ]
   },
   "sizes": {
     "upstream": {
-      "tree_mb": 302.9,
+      "tree_mb": 224.9,
       "radio_cpp": 704,
       "radio_h": 1041,
       "pulses_cpp": 17,
       "telemetry_cpp": 15,
       "targets": [
+        "c14",
+        "common",
+        "horus",
+        "pa01",
+        "pl18",
+        "simu",
+        "st16",
+        "stm32h7s78-dk",
+        "t15pro",
+        "t22",
         "taranis",
         "tx15",
-        "t22",
-        "horus",
-        "common",
-        "pa01",
-        "tx16smk3",
-        "simu",
-        "c14",
-        "pl18",
-        "stm32h7s78-dk",
-        "st16",
-        "t15pro"
-      ]
+        "tx16smk3"
+      ],
+      "module_loc": {
+        "mixer_core": {
+          "files": 9,
+          "lines": 4081
+        },
+        "pulses": {
+          "files": 17,
+          "lines": 6948
+        },
+        "telemetry": {
+          "files": 15,
+          "lines": 8058
+        },
+        "gui_colorlcd": {
+          "files": 167,
+          "lines": 44838
+        },
+        "lua": {
+          "files": 20,
+          "lines": 19175
+        },
+        "storage_yaml": {
+          "files": 50,
+          "lines": 31514
+        },
+        "hal_esp32s3": {
+          "files": 0,
+          "lines": 0
+        },
+        "hal_simu": {
+          "files": 20,
+          "lines": 4407
+        }
+      },
+      "protocols": {
+        "pulses_cpp": 17,
+        "telemetry_cpp": 15,
+        "pulse_modules": [
+          "afhds2",
+          "afhds3",
+          "afhds3_transport",
+          "crossfire",
+          "dsm2",
+          "dsmp",
+          "flysky",
+          "ghost",
+          "modules_helpers",
+          "multi",
+          "ppm",
+          "pulses",
+          "pxx",
+          "pxx1",
+          "pxx2",
+          "pxx2_ota",
+          "sbus"
+        ],
+        "telemetry_modules": [
+          "crossfire",
+          "flysky_ibus",
+          "flysky_nv14",
+          "frsky",
+          "frsky_d",
+          "frsky_pxx2",
+          "frsky_sport",
+          "ghost",
+          "hitec",
+          "hott",
+          "mlink",
+          "multi",
+          "spektrum",
+          "telemetry",
+          "telemetry_sensors"
+        ],
+        "highlighted_protocols": [
+          "crossfire",
+          "multi",
+          "ghost",
+          "afhds2",
+          "afhds3",
+          "flysky",
+          "ppm",
+          "pxx",
+          "pxx2",
+          "sbus",
+          "dsm"
+        ]
+      }
     },
     "esp32": {
-      "tree_mb": 121.0,
+      "tree_mb": 121.3,
       "radio_cpp": 736,
       "radio_h": 735,
       "pulses_cpp": 17,
       "telemetry_cpp": 15,
       "targets": [
+        "c14",
+        "common",
+        "esp32s3",
+        "horus",
+        "pa01",
+        "pl18",
+        "simu",
+        "st16",
+        "stm32h7s78-dk",
+        "t15pro",
+        "t22",
         "taranis",
         "tx15",
-        "t22",
-        "horus",
-        "common",
-        "pa01",
-        "tx16smk3",
-        "simu",
-        "c14",
-        "pl18",
-        "esp32s3",
-        "stm32h7s78-dk",
-        "st16",
-        "t15pro"
-      ]
+        "tx16smk3"
+      ],
+      "module_loc": {
+        "mixer_core": {
+          "files": 10,
+          "lines": 4172
+        },
+        "pulses": {
+          "files": 17,
+          "lines": 6948
+        },
+        "telemetry": {
+          "files": 15,
+          "lines": 8058
+        },
+        "gui_colorlcd": {
+          "files": 167,
+          "lines": 44838
+        },
+        "lua": {
+          "files": 20,
+          "lines": 19175
+        },
+        "storage_yaml": {
+          "files": 50,
+          "lines": 31514
+        },
+        "hal_esp32s3": {
+          "files": 27,
+          "lines": 1699
+        },
+        "hal_simu": {
+          "files": 20,
+          "lines": 4407
+        }
+      },
+      "protocols": {
+        "pulses_cpp": 17,
+        "telemetry_cpp": 15,
+        "pulse_modules": [
+          "afhds2",
+          "afhds3",
+          "afhds3_transport",
+          "crossfire",
+          "dsm2",
+          "dsmp",
+          "flysky",
+          "ghost",
+          "modules_helpers",
+          "multi",
+          "ppm",
+          "pulses",
+          "pxx",
+          "pxx1",
+          "pxx2",
+          "pxx2_ota",
+          "sbus"
+        ],
+        "telemetry_modules": [
+          "crossfire",
+          "flysky_ibus",
+          "flysky_nv14",
+          "frsky",
+          "frsky_d",
+          "frsky_pxx2",
+          "frsky_sport",
+          "ghost",
+          "hitec",
+          "hott",
+          "mlink",
+          "multi",
+          "spektrum",
+          "telemetry",
+          "telemetry_sensors"
+        ],
+        "highlighted_protocols": [
+          "crossfire",
+          "multi",
+          "ghost",
+          "afhds2",
+          "afhds3",
+          "flysky",
+          "ppm",
+          "pxx",
+          "pxx2",
+          "sbus",
+          "dsm"
+        ]
+      }
+    }
+  },
+  "hw_defs": {
+    "upstream_tx15": {
+      "present": true,
+      "adc_inputs": 8,
+      "adc_by_type": {
+        "STICK": 4,
+        "FLEX": 2,
+        "VBAT": 1,
+        "RTC_BAT": 1
+      },
+      "keys": 7,
+      "switches": 12,
+      "json_bytes": 10988
+    },
+    "esp32s3": {
+      "present": true,
+      "adc_inputs": 8,
+      "adc_by_type": {
+        "STICK": 4,
+        "FLEX": 2,
+        "VBAT": 1,
+        "RTC_BAT": 1
+      },
+      "keys": 7,
+      "switches": 6,
+      "json_bytes": 5638
     }
   },
   "hal_coverage": {
@@ -211,210 +421,421 @@
       "side": "upstream",
       "ok": true,
       "detail": "103 lines",
-      "ms": 168.2088530000101
+      "ms": 361.9215999997323
     },
     {
       "name": "hwgen:hal_keys",
       "side": "upstream",
       "ok": true,
       "detail": "41 lines",
-      "ms": 158.70742399999926
+      "ms": 350.9362999993755
     },
     {
       "name": "hwgen:hal_adc_inputs",
       "side": "upstream",
       "ok": true,
       "detail": "44 lines",
-      "ms": 163.08924600002683
+      "ms": 345.66670000003796
     },
     {
       "name": "hwgen:yaml_inputs",
       "side": "upstream",
       "ok": true,
       "detail": "26 lines",
-      "ms": 157.80197499998394
+      "ms": 351.7289000001256
     },
     {
       "name": "hwgen:lua_keys",
       "side": "upstream",
       "ok": true,
       "detail": "74 lines",
-      "ms": 162.0196250000845
+      "ms": 350.3811999999016
     },
     {
       "name": "hwgen:simu_switches",
       "side": "upstream",
       "ok": true,
       "detail": "24 lines",
-      "ms": 158.90783500003636
+      "ms": 335.7596999994712
     },
     {
       "name": "hwgen:stm32_keys",
       "side": "upstream",
       "ok": true,
       "detail": "69 lines",
-      "ms": 160.48059499996725
+      "ms": 373.91110000044137
     },
     {
       "name": "hwgen:stm32_adc_inputs",
       "side": "upstream",
       "ok": true,
       "detail": "166 lines",
-      "ms": 163.04832699995586
+      "ms": 350.30880000067555
     },
     {
       "name": "hwgen:hal_settings",
       "side": "esp32",
       "ok": true,
       "detail": "47 lines",
-      "ms": 165.18644299992502
+      "ms": 372.8101000006063
     },
     {
       "name": "hwgen:hal_keys",
       "side": "esp32",
       "ok": true,
       "detail": "41 lines",
-      "ms": 157.53140300000723
+      "ms": 515.9265000002051
     },
     {
       "name": "hwgen:hal_adc_inputs",
       "side": "esp32",
       "ok": true,
       "detail": "44 lines",
-      "ms": 156.84872499991798
+      "ms": 373.9165999995748
     },
     {
       "name": "hwgen:yaml_inputs",
       "side": "esp32",
       "ok": true,
       "detail": "28 lines",
-      "ms": 155.1039480000327
+      "ms": 349.4774000000689
     },
     {
       "name": "hwgen:lua_keys",
       "side": "esp32",
       "ok": true,
       "detail": "74 lines",
-      "ms": 160.20849100004853
+      "ms": 456.1434000006557
     },
     {
       "name": "hwgen:simu_switches",
       "side": "esp32",
       "ok": true,
       "detail": "26 lines",
-      "ms": 151.95952900000975
+      "ms": 341.1945999996533
     },
     {
       "name": "hwgen:esp32_keys",
       "side": "esp32",
       "ok": true,
       "detail": "43 lines",
-      "ms": 157.540283000003
+      "ms": 355.33269999996264
     },
     {
       "name": "hwgen:esp32_adc_inputs",
       "side": "esp32",
       "ok": true,
       "detail": "26 lines",
-      "ms": 155.22188800002823
+      "ms": 335.15470000020287
     },
     {
       "name": "hwgen:esp32_switches",
       "side": "esp32",
       "ok": true,
       "detail": "15 lines",
-      "ms": 155.55593400006273
+      "ms": 335.9560999997484
     },
     {
       "name": "host_compile:gpio_driver.cpp",
       "side": "esp32",
       "ok": true,
-      "detail": "object 10392B",
-      "ms": 165.00067399999807
+      "detail": "skipped \u2014 no C++ compiler (optional)",
+      "ms": 0
     },
     {
       "name": "host_compile:delays_driver.cpp",
       "side": "esp32",
       "ok": true,
-      "detail": "object 1600B",
-      "ms": 12.746032999984891
-    },
-    {
-      "name": "source_present:simu/adc_driver.cpp",
-      "side": "upstream",
-      "ok": true,
-      "detail": "SDL simu HAL present",
+      "detail": "skipped \u2014 no C++ compiler (optional)",
       "ms": 0
     },
     {
-      "name": "verify_hw_gen.sh",
-      "side": "esp32",
+      "name": "simu_hal_sources",
+      "side": "upstream",
       "ok": true,
-      "detail": "OK hal_settings.h\nOK hal_keys.inc\nOK hal_adc_inputs.inc\nOK simu_switches.inc\nOK esp32_keys.inc\nOK esp32_switches.inc\nOK esp32_adc_inputs.inc\nOK yaml_inputs.inc\nOK lua_keys.inc\nOK lua_inputs.inc\nOK lua_mixsrc.inc\nOK hal_keys_lock.h\nOK host gpio_driver.o\nAll ESP32 hardware-definition checks passed.\n",
-      "ms": 1998.6666499999046
+      "detail": "ok",
+      "ms": 0
     },
     {
-      "name": "cmake_native_configure_TX15",
+      "name": "source_present:esp32s3/board.cpp",
+      "side": "esp32",
+      "ok": true,
+      "detail": "ESP32-S3 board HAL",
+      "ms": 0
+    },
+    {
+      "name": "verify_hw_gen",
+      "side": "esp32",
+      "ok": true,
+      "detail": "12/12 \u00b7 OK lua_keys, OK lua_inputs, OK lua_mixsrc, OK hal_keys_lock",
+      "ms": 4933.724700000312
+    },
+    {
+      "name": "idf_project",
+      "side": "esp32",
+      "ok": true,
+      "detail": "platforms/esp32 present",
+      "ms": 0
+    },
+    {
+      "name": "hw_json_esp32s3",
+      "side": "esp32",
+      "ok": true,
+      "detail": "esp32s3.json",
+      "ms": 0
+    },
+    {
+      "name": "hw_json_tx15",
       "side": "upstream",
-      "ok": false,
-      "detail": "+: No such file or directory\n    c++: error: linker command failed with exit code 1 (use -v to see invocation)\n    gmake[1]: *** [CMakeFiles/cmTC_967fc.dir/build.make:100: cmTC_967fc] Error 1\n    gmake[1]: Leaving directory '/tmp/etx-compare/upstream-native/CMakeFiles/CMakeScratch/TryCompile-Oxyh5Y'\n    gmake: *** [Makefile:127: cmTC_967fc/fast] Error 2\n    \n    \n\n  \n\n  CMake will not be able to correctly generate this project.\nCall Stack (most recent call first):\n  CMakeLists.txt:3 (project)\n\n\n",
-      "ms": 367.3749700000144
+      "ok": true,
+      "detail": "tx15.json",
+      "ms": 0
     }
   ],
   "summary": {
     "upstream": {
       "checks_total": 10,
-      "checks_ok": 9,
-      "checks_fail": 1,
-      "pass_rate_pct": 90.0
+      "checks_ok": 10,
+      "checks_fail": 0,
+      "pass_rate_pct": 100.0
     },
     "esp32": {
-      "checks_total": 12,
-      "checks_ok": 12,
+      "checks_total": 15,
+      "checks_ok": 15,
       "checks_fail": 0,
       "pass_rate_pct": 100.0
     }
   },
   "benchmarks": [
     {
-      "name": "mixer_like",
+      "name": "sim_mixer_light",
+      "side": "upstream",
+      "iterations": 80000,
+      "elapsed_s": 0.7633862000002409,
+      "ops_per_s": 104796.23550959495,
+      "notes": "python 16ch/32mix; headroom\u00d7 @ 250Hz",
+      "extra": {
+        "headroom_x": 419.2,
+        "period_budget_us": 4000,
+        "avg_us_per_tick": 9.542,
+        "sink": 0
+      }
+    },
+    {
+      "name": "sim_mixer_medium",
+      "side": "upstream",
+      "iterations": 40000,
+      "elapsed_s": 1.6232137000006333,
+      "ops_per_s": 24642.473138308527,
+      "notes": "python 32ch/64mix; headroom\u00d7 @ 250Hz",
+      "extra": {
+        "headroom_x": 98.6,
+        "period_budget_us": 4000,
+        "avg_us_per_tick": 40.58,
+        "sink": 0
+      }
+    },
+    {
+      "name": "sim_mixer_heavy",
+      "side": "upstream",
+      "iterations": 25000,
+      "elapsed_s": 1.1292352999998911,
+      "ops_per_s": 22138.875750698204,
+      "notes": "python 32ch/64mix; headroom\u00d7 @ 250Hz",
+      "extra": {
+        "headroom_x": 88.6,
+        "period_budget_us": 4000,
+        "avg_us_per_tick": 45.169,
+        "sink": 0
+      }
+    },
+    {
+      "name": "sim_logical_switches",
       "side": "upstream",
       "iterations": 200000,
-      "elapsed_s": 0.030902285,
-      "ops_per_s": 6472013.315520195,
-      "notes": "32ch/64mix @ host -O3 (same algorithm both sides)"
+      "elapsed_s": 1.981681700000081,
+      "ops_per_s": 100924.38154926283,
+      "notes": "64 LS evals/iter",
+      "extra": {
+        "true_count": 17
+      }
     },
     {
-      "name": "mixer_like",
+      "name": "sim_crsf_encode_crc",
+      "side": "upstream",
+      "iterations": 200000,
+      "elapsed_s": 1.1513051000001724,
+      "ops_per_s": 173715.89859192845,
+      "notes": "CRSF RC frame pack + CRC8",
+      "extra": {
+        "verified": 200000,
+        "verify_pct": 100.0
+      }
+    },
+    {
+      "name": "sim_adc_pipeline",
+      "side": "upstream",
+      "iterations": 500000,
+      "elapsed_s": 0.6005352000001949,
+      "ops_per_s": 832590.6624621466,
+      "notes": "8-ch EMA jitter filter",
+      "extra": {
+        "last": [
+          2104,
+          2101,
+          2091,
+          2085,
+          2085,
+          2091,
+          2102,
+          2097
+        ]
+      }
+    },
+    {
+      "name": "sim_ui_mixer_concurrency",
+      "side": "upstream",
+      "iterations": 2258400,
+      "elapsed_s": 0.4000357000004442,
+      "ops_per_s": 5645496.139463284,
+      "notes": "host model of UI+mixer concurrency",
+      "extra": {
+        "mixer_units": 752800,
+        "ui_units": 1505600,
+        "parallel_factor": 1.0,
+        "sink": 0
+      }
+    },
+    {
+      "name": "sim_mixer_light",
+      "side": "esp32",
+      "iterations": 80000,
+      "elapsed_s": 0.7482289999998102,
+      "ops_per_s": 106919.13839215039,
+      "notes": "python 16ch/32mix; headroom\u00d7 @ 250Hz",
+      "extra": {
+        "headroom_x": 427.7,
+        "period_budget_us": 4000,
+        "avg_us_per_tick": 9.353,
+        "sink": 0
+      }
+    },
+    {
+      "name": "sim_mixer_medium",
+      "side": "esp32",
+      "iterations": 40000,
+      "elapsed_s": 1.5918174999997063,
+      "ops_per_s": 25128.50876435733,
+      "notes": "python 32ch/64mix; headroom\u00d7 @ 250Hz",
+      "extra": {
+        "headroom_x": 100.5,
+        "period_budget_us": 4000,
+        "avg_us_per_tick": 39.795,
+        "sink": 0
+      }
+    },
+    {
+      "name": "sim_mixer_heavy",
+      "side": "esp32",
+      "iterations": 25000,
+      "elapsed_s": 1.1350302000000738,
+      "ops_per_s": 22025.84565591151,
+      "notes": "python 32ch/64mix; headroom\u00d7 @ 250Hz",
+      "extra": {
+        "headroom_x": 88.1,
+        "period_budget_us": 4000,
+        "avg_us_per_tick": 45.401,
+        "sink": 0
+      }
+    },
+    {
+      "name": "sim_logical_switches",
       "side": "esp32",
       "iterations": 200000,
-      "elapsed_s": 0.030955598,
-      "ops_per_s": 6460866.948847184,
-      "notes": "32ch/64mix @ host -O3 (same algorithm both sides)"
+      "elapsed_s": 2.0202159000000393,
+      "ops_per_s": 98999.31982517122,
+      "notes": "64 LS evals/iter",
+      "extra": {
+        "true_count": 17
+      }
     },
     {
-      "name": "adc_jitter_filter",
+      "name": "sim_crsf_encode_crc",
+      "side": "esp32",
+      "iterations": 200000,
+      "elapsed_s": 1.4044479000003776,
+      "ops_per_s": 142404.7129124165,
+      "notes": "CRSF RC frame pack + CRC8",
+      "extra": {
+        "verified": 200000,
+        "verify_pct": 100.0
+      }
+    },
+    {
+      "name": "sim_adc_pipeline",
+      "side": "esp32",
+      "iterations": 500000,
+      "elapsed_s": 0.7010200000004261,
+      "ops_per_s": 713246.4123701123,
+      "notes": "8-ch EMA jitter filter",
+      "extra": {
+        "last": [
+          2104,
+          2101,
+          2091,
+          2085,
+          2085,
+          2091,
+          2102,
+          2097
+        ]
+      }
+    },
+    {
+      "name": "sim_ui_mixer_concurrency",
+      "side": "esp32",
+      "iterations": 3236100,
+      "elapsed_s": 0.40005979999932606,
+      "ops_per_s": 8089040.688430709,
+      "notes": "host model of UI+mixer concurrency",
+      "extra": {
+        "mixer_units": 616400,
+        "ui_units": 1232800,
+        "parallel_factor": 1.75,
+        "sink": 0
+      }
+    },
+    {
+      "name": "sim_scheduler_jitter",
       "side": "upstream",
-      "iterations": 1000000,
-      "elapsed_s": 0.001349054,
-      "ops_per_s": 741260171.9427096,
-      "notes": "EdgeTX-style EMA"
+      "iterations": 5000,
+      "elapsed_s": 20.0,
+      "ops_per_s": 250.0,
+      "notes": "cores=1 base_load=120us",
+      "extra": {
+        "deadline_misses": 1,
+        "miss_rate_pct": 0.02,
+        "avg_latency_us": 792.3,
+        "max_latency_us": 4292.5,
+        "period_us": 4000.0,
+        "cores_modeled": 1
+      }
     },
     {
-      "name": "adc_jitter_filter",
+      "name": "sim_scheduler_jitter",
       "side": "esp32",
-      "iterations": 1000000,
-      "elapsed_s": 0.001379876,
-      "ops_per_s": 724702799.3819735,
-      "notes": "EdgeTX-style EMA"
-    },
-    {
-      "name": "gpio_toggle_host",
-      "side": "esp32",
-      "iterations": 5000000,
-      "elapsed_s": 0.01536614,
-      "ops_per_s": 325390761.7658045,
-      "notes": "host stub map<>"
+      "iterations": 5000,
+      "elapsed_s": 20.0,
+      "ops_per_s": 250.0,
+      "notes": "cores=2 base_load=120us",
+      "extra": {
+        "deadline_misses": 0,
+        "miss_rate_pct": 0.0,
+        "avg_latency_us": 184.7,
+        "max_latency_us": 406.0,
+        "period_us": 4000.0,
+        "cores_modeled": 2
+      }
     },
     {
       "name": "mixer_scheduler_rate",
@@ -422,7 +843,8 @@
       "iterations": 250,
       "elapsed_s": 0.004,
       "ops_per_s": 250.0,
-      "notes": "configured period 4000 us \u2192 250.0 Hz"
+      "notes": "configured period 4000 us \u2192 250.0 Hz",
+      "extra": {}
     },
     {
       "name": "mixer_scheduler_rate",
@@ -430,9 +852,36 @@
       "iterations": 250,
       "elapsed_s": 0.004,
       "ops_per_s": 250.0,
-      "notes": "configured period 4000 us \u2192 250.0 Hz"
+      "notes": "configured period 4000 us \u2192 250.0 Hz",
+      "extra": {}
     }
   ],
+  "derived": {
+    "mixer_headroom_x": {
+      "light": {
+        "upstream": 419.2,
+        "esp32": 427.7
+      },
+      "medium": {
+        "upstream": 98.6,
+        "esp32": 100.5
+      },
+      "heavy": {
+        "upstream": 88.6,
+        "esp32": 88.1
+      }
+    },
+    "scheduler_miss_pct": {
+      "upstream": 0.02,
+      "esp32": 0.0
+    },
+    "host": {
+      "system": "Windows",
+      "machine": "AMD64",
+      "python": "3.14.4",
+      "cxx": "none"
+    }
+  },
   "theoretical_perf": [
     {
       "metric": "CPU",
@@ -480,7 +929,6 @@
   "runtime_readiness": {
     "upstream": {
       "simu_sources": true,
-      "native_cmake": false,
       "production_maturity": "High",
       "esp32_binary": false
     },

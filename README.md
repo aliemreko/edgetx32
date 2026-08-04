@@ -27,16 +27,17 @@ replacing the STM32 HAL with an ESP32 board target.
 | Cores | Single application core | **Dual-core** (UI ↔ mixer) |
 | DIY cost | Full radio BOM | **DevKit + ELRS module** |
 
-Host side-by-side simulation (hwgen / HAL smoke / mixer benches):
+Host side-by-side simulation (hwgen / mixer / LS / CRSF / ADC / scheduler models):
 
 | Metric | Upstream | EdgeTX32 |
 |--|--|--|
-| Automated checks | 90% | **100%** |
-| Mixer-like host throughput | ~6.47M loops/s | ~6.46M loops/s |
-| Mixer scheduler target | 250 Hz | 250 Hz |
+| Automated checks | **100%** | **100%** |
+| Mixer headroom @ 250 Hz (medium) | ~99× | ~100× |
+| Scheduler deadline misses (model) | ~0.02% | **0%** |
 | HAL coverage (12 pieces) | Complete | Complete |
+| CRSF / Multi / Ghost / … pulses | Present | Present (portable) |
 
-Full PDF report: [`reports/EdgeTX_vs_ESP32_Comparison_Report.pdf`](reports/EdgeTX_vs_ESP32_Comparison_Report.pdf)
+Full write-up: [`docs/STATISTICS.md`](docs/STATISTICS.md) · PDF: [`reports/EdgeTX_vs_ESP32_Comparison_Report.pdf`](reports/EdgeTX_vs_ESP32_Comparison_Report.pdf)
 
 ---
 
