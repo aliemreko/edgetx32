@@ -26,16 +26,15 @@ jobs:
       - name: Check out the repo
         uses: actions/checkout@v6
 
-      - name: Install Python build deps
-        run: |
-          pip install --upgrade pip
-          pip install -r requirements.txt
-
       - name: Build EdgeTX32 (ESP32-S3)
         env:
           EDGETX_VERSION_SUFFIX: nightly
+        shell: bash
         run: |
+          set -euo pipefail
           . "${IDF_PATH}/export.sh"
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
           ./tools/esp32/build.sh
 
       - name: Stage release artifacts
