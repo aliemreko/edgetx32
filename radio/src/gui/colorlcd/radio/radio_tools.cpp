@@ -341,6 +341,7 @@ void RadioToolsPage::rebuild(Window* window)
   if (isModelGPSSensorPresent())
     tools.emplace_back(ToolEntry{STR_GPS_MODEL_LOCATOR, "", run_gpstool});
 
+#if defined(PXX2) || defined(MULTIMODULE)
 #if defined(HARDWARE_INTERNAL_MODULE)
   if (intSpecAnalyser)
     tools.emplace_back(ToolEntry{STR_SPECTRUM_ANALYSER_INT, "", run_spektrum_int});
@@ -350,6 +351,7 @@ void RadioToolsPage::rebuild(Window* window)
   if (extSpecAnalyser)
     tools.emplace_back(ToolEntry{STR_SPECTRUM_ANALYSER_EXT, "", run_spektrum_ext});
 #endif
+#endif  // defined(PXX2) || defined(MULTIMODULE)
 
 #if defined(GHOST)
   if (isModuleGhost(EXTERNAL_MODULE)) {
