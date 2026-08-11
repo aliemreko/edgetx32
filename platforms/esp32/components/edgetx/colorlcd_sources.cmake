@@ -1,15 +1,31 @@
 # Real EdgeTX colorlcd + LVGL sources for the ESP-IDF component.
-# Kept separate so the component CMakeLists stays readable.
+# Must stay scriptable during IDF early expansion (no SET_SOURCE_FILES_PROPERTIES).
 
 set(COLORLCD_DIR ${RADIO_SRC}/gui/colorlcd)
 set(LVGL_SRC_DIR ${RADIO_SRC}/thirdparty/lvgl/src)
 set(FONT_DIR std)
 set(UTILS_DIR ${EDGETX_ROOT}/radio/util)
 
-# --- LVGL (software renderer only; skip STM32 DMA2D) ---
-include(${COLORLCD_DIR}/CMakeListsLVGL.txt)
-list(FILTER LVGL_SOURCES EXCLUDE REGEX "stm32_dma2d")
-list(TRANSFORM LVGL_SOURCES PREPEND ${RADIO_SRC}/)
+# --- LVGL (software renderer only; skip STM32 DMA2D / SDL / unused extras) ---
+file(GLOB LVGL_SOURCES
+  ${LVGL_SRC_DIR}/core/*.c
+  ${LVGL_SRC_DIR}/draw/*.c
+  ${LVGL_SRC_DIR}/draw/sw/*.c
+  ${LVGL_SRC_DIR}/font/lv_font.c
+  ${LVGL_SRC_DIR}/font/lv_font_fmt_txt.c
+  ${LVGL_SRC_DIR}/hal/*.c
+  ${LVGL_SRC_DIR}/misc/*.c
+  ${LVGL_SRC_DIR}/widgets/*.c
+  ${LVGL_SRC_DIR}/extra/lv_extra.c
+  ${LVGL_SRC_DIR}/extra/others/snapshot/*.c
+  ${LVGL_SRC_DIR}/extra/layouts/grid/*.c
+  ${LVGL_SRC_DIR}/extra/layouts/flex/*.c
+  ${LVGL_SRC_DIR}/extra/libs/qrcode/*.c
+  ${LVGL_SRC_DIR}/extra/libs/fsdrv/lv_fs_fatfs.c
+  ${LVGL_SRC_DIR}/extra/widgets/tileview/*.c
+  ${LVGL_SRC_DIR}/extra/widgets/keyboard/*.c
+)
+list(FILTER LVGL_SOURCES EXCLUDE REGEX "lv_draw_sw_dither|lv_log\\.c|lv_lru\\.c|lv_txt_ap\\.c")
 
 # --- EN LVGL fonts for 480x272 (FONT_DIR=std) ---
 file(GLOB COLORLCD_FONT_SRCS
@@ -120,6 +136,7 @@ set(COLORLCD_INCLUDE_DIRS
 )
 
 # Generate .lbm includes from PNGs into GEN_DIR (needed by bitmaps.cpp).
+# Not scriptable during IDF early expansion.
 set(BITMAP_LZ4_ARGS --size-format 2 --lz4)
 set(COLORLCD_LBM_OUTPUTS "")
 if(NOT CMAKE_BUILD_EARLY_EXPANSION)
