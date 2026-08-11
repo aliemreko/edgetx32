@@ -50,7 +50,7 @@
  *=========================*/
 
 /*1: use custom malloc/free, 0: use the built-in `lv_mem_alloc()` and `lv_mem_free()`*/
-#if defined(BOOT)
+#if defined(BOOT) || defined(ESP_PLATFORM)
 #define LV_MEM_CUSTOM 1
 #else
 #define LV_MEM_CUSTOM 0

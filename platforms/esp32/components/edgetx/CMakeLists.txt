@@ -98,6 +98,7 @@ set(ESP32_HAL_SRCS
   ${ESP32_TARGET}/wifi_telemetry.cpp
   ${ESP32_TARGET}/ble_trainer.cpp
   ${ESP32_TARGET}/esp32_affinity.cpp
+  ${ESP32_TARGET}/dma2d.cpp
   ${CMAKE_CURRENT_LIST_DIR}/edgetx_esp32_start.cpp
   ${CMAKE_CURRENT_LIST_DIR}/esp32_stubs.cpp
 )
