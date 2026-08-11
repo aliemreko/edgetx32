@@ -37,10 +37,6 @@ void trainer_stop_dsc() {}
 void trainer_init_module_cppm() {}
 void trainer_stop_module_cppm() {}
 
-void sbusAuxSetEnabled(bool) {}
-void sbusSetReceiveCtx(void*, const etx_serial_driver_t*) {}
-void sbusAuxFrameReceived(void*) {}
-
 // IDF FatFs is linked without relative-path support; provide no-op RPATH APIs.
 extern "C" {
 FRESULT f_chdir(const TCHAR* path)
