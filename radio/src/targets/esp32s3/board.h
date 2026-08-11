@@ -47,6 +47,10 @@ void EXTERNAL_MODULE_OFF();
 #define BATTERY_MIN                     68
 #define BATTERY_MAX                     86
 
+#define BACKLIGHT_LEVEL_MAX             100
+#define BACKLIGHT_LEVEL_MIN             1
+#define BACKLIGHT_FORCED_ON             (BACKLIGHT_LEVEL_MAX + 1)
+
 void pwrInit();
 void pwrOn();
 void pwrOff();
