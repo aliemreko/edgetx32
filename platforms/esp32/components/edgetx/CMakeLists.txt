@@ -145,6 +145,15 @@ idf_component_register(
     ${RADIO_SRC}/thirdparty
     ${RADIO_SRC}/thirdparty/FatFs
     ${RADIO_SRC}/gui/colorlcd
+    ${RADIO_SRC}/gui/colorlcd/layouts
+    ${RADIO_SRC}/gui/colorlcd/libui
+    ${RADIO_SRC}/gui/colorlcd/model
+    ${RADIO_SRC}/gui/colorlcd/radio
+    ${RADIO_SRC}/gui/colorlcd/module
+    ${RADIO_SRC}/gui/colorlcd/mainview
+    ${RADIO_SRC}/gui/colorlcd/setup_menus
+    ${RADIO_SRC}/gui/colorlcd/themes
+    ${RADIO_SRC}/gui/colorlcd/controls
     ${RADIO_SRC}/gui/common
     ${CMAKE_CURRENT_LIST_DIR}
     ${CMAKE_CURRENT_LIST_DIR}/FreeRTOS/include
