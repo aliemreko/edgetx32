@@ -72,6 +72,7 @@ set(COLORLCD_CORE_SRCS
   ${COLORLCD_DIR}/module/module_setup.cpp
   ${COLORLCD_DIR}/module/ppm_settings.cpp
   ${COLORLCD_DIR}/module/crossfire_settings.cpp
+  ${COLORLCD_DIR}/module/bind_menu_d16.cpp
   ${COLORLCD_DIR}/radio/hw_extmodule.cpp
   ${COLORLCD_DIR}/radio/hw_inputs.cpp
   ${COLORLCD_DIR}/radio/hw_intmodule.cpp
@@ -144,10 +145,16 @@ set(LUA_API_SRCS
 set(COLORLCD_SUPPORT_SRCS
   ${RADIO_SRC}/main.cpp
   ${RADIO_SRC}/gui/gui_common.cpp
+  ${RADIO_SRC}/gui/screenshot.cpp
   ${RADIO_SRC}/model_init.cpp
   ${RADIO_SRC}/datastructs_model.cpp
   ${RADIO_SRC}/datastructs_radio.cpp
   ${RADIO_SRC}/logs.cpp
+  ${RADIO_SRC}/stamp.cpp
+  ${RADIO_SRC}/cfn_sort.cpp
+  ${RADIO_SRC}/sbus.cpp
+  ${RADIO_SRC}/gyro.cpp
+  ${RADIO_SRC}/hal/imu.cpp
   ${RADIO_SRC}/thirdparty/lz4/lz4.c
   ${RADIO_SRC}/translations/tts/tts_en.cpp
   ${LUA_CORE_SRCS}

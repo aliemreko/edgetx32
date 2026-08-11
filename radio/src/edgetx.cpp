@@ -76,6 +76,10 @@
 #include <malloc.h>
 #endif
 
+#if defined(ESP_PLATFORM)
+#include <esp_heap_caps.h>
+#endif
+
 #if defined(LUA)
 #include "lua/lua_states.h"
 #include "lua/custom_allocator.h"
@@ -1706,8 +1710,9 @@ int main()
   pulsesInit();
 
 #if defined(COLORLCD)
-  // Do all lvgl init in case of fatal error on startup
-  extern void initLvgl();
+  // Do all lvgl init in case of fatal error on startup.
+  // edgeTxEsp32Main is extern "C"; force C++ linkage for initLvgl.
+  extern "C++" void initLvgl();
   initLvgl();
 #endif
 
@@ -2005,6 +2010,8 @@ uint32_t availableMemory()
 {
 #if defined(SIMU)
   return 1000;
+#elif defined(ESP_PLATFORM)
+  return (uint32_t)heap_caps_get_free_size(MALLOC_CAP_8BIT);
 #else
   extern unsigned char *heap;
   extern int _heap_end;

@@ -21,6 +21,11 @@
 
 #define LANGUAGE_PACKS_DEFINITION
 
+#if defined(ESP_PLATFORM)
+// ESP32 ships English TTS only; languagePacks[] comes from esp32_stubs.cpp.
+#undef LANGUAGE_PACKS_DEFINITION
+#endif
+
 #include "radio_setup.h"
 
 #include "choice.h"

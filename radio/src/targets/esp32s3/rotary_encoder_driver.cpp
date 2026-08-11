@@ -9,7 +9,9 @@
 #include "esp32_gpio.h"
 
 static rotenc_t s_raw = 0;
-static int8_t s_accel = 0;
+
+// Used by colorlcd LvglWrapper rotary accel tracking.
+volatile uint32_t rotencDt = 0;
 
 void rotaryEncoderInit()
 {
@@ -22,5 +24,5 @@ rotenc_t rotaryEncoderGetValue()
   return s_raw / ROTARY_ENCODER_GRANULARITY;
 }
 
-int8_t rotaryEncoderGetAccel() { return s_accel; }
-void rotaryEncoderResetAccel() { s_accel = 0; }
+// rotaryEncoderGetAccel() is provided by LvglWrapper under COLORLCD.
+void rotaryEncoderResetAccel() {}
