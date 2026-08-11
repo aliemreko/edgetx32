@@ -102,6 +102,9 @@ set(ESP32_HAL_SRCS
   ${CMAKE_CURRENT_LIST_DIR}/esp32_stubs.cpp
 )
 
+# Real colorlcd GUI + LVGL (replaces previous GUI stubs)
+include(${CMAKE_CURRENT_LIST_DIR}/colorlcd_sources.cmake)
+
 # Portable HAL helpers
 # Note: hal/storage.cpp pulls STM32 diskio_spi — ESP32 uses sd_diskio.cpp instead.
 list(APPEND ESP32_HAL_SRCS
@@ -184,24 +187,14 @@ idf_component_register(
     ${PULSES_SRCS}
     ${TELEMETRY_SRCS}
     ${STORAGE_SRCS}
+    ${COLORLCD_ALL_SRCS}
   INCLUDE_DIRS
     ${RADIO_SRC}
     ${ESP32_TARGET}
     ${GEN_DIR}
     ${RADIO_SRC}/thirdparty
     ${RADIO_SRC}/thirdparty/FatFs
-    ${RADIO_SRC}/gui
-    ${RADIO_SRC}/gui/colorlcd
-    ${RADIO_SRC}/gui/colorlcd/layouts
-    ${RADIO_SRC}/gui/colorlcd/libui
-    ${RADIO_SRC}/gui/colorlcd/model
-    ${RADIO_SRC}/gui/colorlcd/radio
-    ${RADIO_SRC}/gui/colorlcd/module
-    ${RADIO_SRC}/gui/colorlcd/mainview
-    ${RADIO_SRC}/gui/colorlcd/setup_menus
-    ${RADIO_SRC}/gui/colorlcd/themes
-    ${RADIO_SRC}/gui/colorlcd/controls
-    ${RADIO_SRC}/gui/common
+    ${COLORLCD_INCLUDE_DIRS}
     ${CMAKE_CURRENT_LIST_DIR}
     ${CMAKE_CURRENT_LIST_DIR}/FreeRTOS/include
     ${CMAKE_CURRENT_LIST_DIR}/FreeRTOS
@@ -212,7 +205,7 @@ idf_component_register(
 )
 
 if(NOT CMAKE_BUILD_EARLY_EXPANSION)
-  add_dependencies(${COMPONENT_LIB} edgetx_hw_gen)
+  add_dependencies(${COMPONENT_LIB} edgetx_hw_gen edgetx_colorlcd_bitmaps)
 
   target_compile_definitions(${COMPONENT_LIB} PUBLIC
     FREE_RTOS
@@ -228,6 +221,7 @@ if(NOT CMAKE_BUILD_EARLY_EXPANSION)
     HARDWARE_INTERNAL_MODULE
     HARDWARE_EXTERNAL_MODULE
     SOFTWARE_KEYBOARD
+    ROTARY_ENCODER_NAVIGATION
     RTCLOCK
     USE_WATCHDOG
     DISABLE_MCUCHECK
@@ -251,6 +245,8 @@ if(NOT CMAKE_BUILD_EARLY_EXPANSION)
     TIMERS=3
     LUA_INPUTS=1
     IMU=1
+    LV_CONF_INCLUDE_SIMPLE
+    LV_LVGL_H_INCLUDE_SIMPLE
   )
 
   # EdgeTX still vendors FreeRTOS headers in some paths — prefer IDF's.
