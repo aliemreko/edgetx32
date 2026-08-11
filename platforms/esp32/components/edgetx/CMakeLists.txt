@@ -158,10 +158,9 @@ set(TELEMETRY_SRCS
   ${RADIO_SRC}/telemetry/crossfire.cpp
 )
 # yaml_datastructs_<board>.cpp files are #included by yaml_datastructs.cpp — do not compile them alone.
+# Skip STM32 BKPSRAM rtc_backup / rlc path (needs generated datacopy.inc + BKPSRAM_BASE).
 set(STORAGE_SRCS
   ${RADIO_SRC}/storage/modelslist.cpp
-  ${RADIO_SRC}/storage/rlc.cpp
-  ${RADIO_SRC}/storage/rtc_backup.cpp
   ${RADIO_SRC}/storage/sdcard_common.cpp
   ${RADIO_SRC}/storage/sdcard_yaml.cpp
   ${RADIO_SRC}/storage/storage_common.cpp
@@ -244,6 +243,8 @@ if(NOT CMAKE_BUILD_EARLY_EXPANSION)
     HAPTIC
     CROSSFIRE
     TIMERS=3
+    LUA_INPUTS=1
+    IMU=1
   )
 
   # EdgeTX still vendors FreeRTOS headers in some paths — prefer IDF's.
