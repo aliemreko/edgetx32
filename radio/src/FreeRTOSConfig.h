@@ -21,6 +21,13 @@
 
 #pragma once
 
+#if defined(ESP_PLATFORM)
+/* radio/src is on the include path ahead of ESP-IDF FreeRTOS, so this file
+ * would otherwise shadow IDF's FreeRTOSConfig.h (missing configNUMBER_OF_CORES).
+ */
+#include_next "FreeRTOSConfig.h"
+#else
+
 // Avoid using any other header file
 #include <stdint.h>
 extern uint32_t SystemCoreClock;
@@ -127,3 +134,5 @@ standard names. */
 #if defined(DEBUG_SEGGER_SYSVIEW)
 #include "SEGGER_SYSVIEW_FreeRTOS.h"
 #endif
+
+#endif /* !ESP_PLATFORM */

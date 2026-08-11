@@ -7,6 +7,8 @@
 #include "hal/adc_driver.h"
 #include "board.h"
 #include "esp32_gpio.h"
+#include "myeeprom.h"
+#include "translations/translations.h"
 
 #include "hal_adc_inputs.inc"
 

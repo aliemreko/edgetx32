@@ -11,8 +11,8 @@
 #include <cstring>
 
 #if defined(ESP_PLATFORM)
+#include "esp32_idf_gpio.h"
 #include "driver/uart.h"
-#include "driver/gpio.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/ringbuf.h"
 #endif

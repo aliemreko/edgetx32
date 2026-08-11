@@ -8,12 +8,13 @@
 
 #if defined(ESP_PLATFORM)
 #include "driver/gptimer.h"
+#include "esp_attr.h"
 #include "esp_log.h"
 
 static gptimer_handle_t s_timer = nullptr;
 static bool s_trigger_enabled = true;
 
-static bool IRAM_ATTR on_timer(gptimer_handle_t, const gptimer_alarm_event_data_t*, void*)
+static IRAM_ATTR bool on_timer(gptimer_handle_t, const gptimer_alarm_event_data_t*, void*)
 {
   if (s_trigger_enabled) {
     mixerSchedulerDisableTrigger();

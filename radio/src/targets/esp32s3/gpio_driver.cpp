@@ -7,7 +7,7 @@
 #include "esp32_gpio.h"
 
 #if defined(ESP_PLATFORM)
-#include "driver/gpio.h"
+#include "esp32_idf_gpio.h"
 #include "esp_attr.h"
 #else
 // Host / unit-test stubs
