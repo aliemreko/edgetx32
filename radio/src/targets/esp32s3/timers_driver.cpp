@@ -4,33 +4,39 @@
  * License GPLv2: http://www.gnu.org/licenses/gpl-2.0.html
  */
 
-#include <stdint.h>
+#include "timers_driver.h"
 
 #if defined(ESP_PLATFORM)
 #include "esp_timer.h"
 #endif
 
-static uint32_t g_ms_tick = 0;
+volatile tmr10ms_t g_tmr10ms = 0;
 
-extern "C" uint32_t timersGetMsTick()
+uint32_t timersGetMsTick()
 {
 #if defined(ESP_PLATFORM)
   return (uint32_t)(esp_timer_get_time() / 1000ULL);
 #else
-  return g_ms_tick;
+  return (uint32_t)g_tmr10ms * 10u;
 #endif
 }
 
-extern "C" uint32_t timersGetUsTick()
+uint32_t timersGetUsTick()
 {
 #if defined(ESP_PLATFORM)
   return (uint32_t)esp_timer_get_time();
 #else
-  return g_ms_tick * 1000;
+  return (uint32_t)g_tmr10ms * 10000u;
 #endif
 }
 
-extern "C" void timersInit()
+void timersInit()
 {
-  // FreeRTOS + esp_timer provide system time; 10ms EdgeTX timer is OS-level.
+  // FreeRTOS + esp_timer provide system time; 10ms EdgeTX tick is OS-level.
+  g_tmr10ms = 0;
+}
+
+void watchdogSuspend(uint32_t timeout)
+{
+  (void)timeout;
 }
