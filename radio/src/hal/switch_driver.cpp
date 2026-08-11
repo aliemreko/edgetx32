@@ -201,6 +201,7 @@ void switchConfigFlex_raw(uint8_t idx, int8_t channel)
 
 uint8_t switchGetFlexChannel(uint8_t idx)
 {
+  if (!MAX_FLEX_SWITCHES || idx >= MAX_FLEX_SWITCHES) return _INVALID_ADC_CH;
   return _flex_switches[idx];
 }
 
