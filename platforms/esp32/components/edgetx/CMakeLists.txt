@@ -145,12 +145,32 @@ set(EDGETX_CORE_SRCS
   ${RADIO_SRC}/os/timer_freertos.cpp
 )
 
-# Protocols + telemetry (UART modules: CRSF/ELRS, Multi, Ghost, ...)
-file(GLOB PULSES_SRCS "${RADIO_SRC}/pulses/*.cpp")
-file(GLOB TELEMETRY_SRCS "${RADIO_SRC}/telemetry/*.cpp")
-file(GLOB STORAGE_SRCS
-  "${RADIO_SRC}/storage/*.cpp"
-  "${RADIO_SRC}/storage/yaml/*.cpp"
+# Protocols + telemetry: only sources matching enabled feature flags.
+# (A full GLOB pulls Multi/PXX/AFHDS/etc. that need extra defines and STM32 deps.)
+set(PULSES_SRCS
+  ${RADIO_SRC}/pulses/pulses.cpp
+  ${RADIO_SRC}/pulses/modules_helpers.cpp
+  ${RADIO_SRC}/pulses/crossfire.cpp
+)
+set(TELEMETRY_SRCS
+  ${RADIO_SRC}/telemetry/telemetry.cpp
+  ${RADIO_SRC}/telemetry/telemetry_sensors.cpp
+  ${RADIO_SRC}/telemetry/crossfire.cpp
+)
+# yaml_datastructs_<board>.cpp files are #included by yaml_datastructs.cpp — do not compile them alone.
+set(STORAGE_SRCS
+  ${RADIO_SRC}/storage/modelslist.cpp
+  ${RADIO_SRC}/storage/rlc.cpp
+  ${RADIO_SRC}/storage/rtc_backup.cpp
+  ${RADIO_SRC}/storage/sdcard_common.cpp
+  ${RADIO_SRC}/storage/sdcard_yaml.cpp
+  ${RADIO_SRC}/storage/storage_common.cpp
+  ${RADIO_SRC}/storage/yaml/yaml_bits.cpp
+  ${RADIO_SRC}/storage/yaml/yaml_datastructs.cpp
+  ${RADIO_SRC}/storage/yaml/yaml_labelslist.cpp
+  ${RADIO_SRC}/storage/yaml/yaml_modelslist.cpp
+  ${RADIO_SRC}/storage/yaml/yaml_parser.cpp
+  ${RADIO_SRC}/storage/yaml/yaml_tree_walker.cpp
 )
 
 idf_component_register(
@@ -195,9 +215,13 @@ if(NOT CMAKE_BUILD_EARLY_EXPANSION)
     ESP_PLATFORM
     PCBESP32S3
     PCBHORUS
+    # Reuse Horus/X10 YAML + storage layout until ESP32 gets its own schema.
+    PCBX10
     COLORLCD
     HARDWARE_TOUCH
     HARDWARE_KEYS
+    HARDWARE_INTERNAL_MODULE
+    HARDWARE_EXTERNAL_MODULE
     SOFTWARE_KEYBOARD
     RTCLOCK
     USE_WATCHDOG

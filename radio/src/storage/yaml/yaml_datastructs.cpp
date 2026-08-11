@@ -28,7 +28,7 @@
 #include "yaml_inputs.inc"
 #include "yaml_datastructs_funcs.cpp"
 
-#if defined(PCBX10) || defined(PCBX12S)
+#if defined(PCBX10) || defined(PCBX12S) || defined(PCBESP32S3)
  #if defined(RADIO_T15)
   #include "yaml_datastructs_t15.cpp"
  #elif defined(RADIO_F16)
