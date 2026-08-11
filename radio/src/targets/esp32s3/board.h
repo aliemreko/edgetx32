@@ -91,4 +91,6 @@ void ledBlue();
 const etx_serial_port_t* auxSerialGetPort(int port_nr);
 
 bool touchPanelEventOccured();
-bool touchPanelRead();
+struct TouchState touchPanelRead();
+struct TouchState getInternalTouchState();
+void touchPanelInit();
