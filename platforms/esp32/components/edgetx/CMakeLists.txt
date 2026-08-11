@@ -165,6 +165,7 @@ idf_component_register(
     ${GEN_DIR}
     ${RADIO_SRC}/thirdparty
     ${RADIO_SRC}/thirdparty/FatFs
+    ${RADIO_SRC}/gui
     ${RADIO_SRC}/gui/colorlcd
     ${RADIO_SRC}/gui/colorlcd/layouts
     ${RADIO_SRC}/gui/colorlcd/libui
