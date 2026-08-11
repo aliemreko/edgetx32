@@ -13,6 +13,7 @@
 #endif
 
 static TouchState s_touchState = {};
+TouchState touchState = {};
 
 bool touchPanelEventOccured() { return false; }
 
