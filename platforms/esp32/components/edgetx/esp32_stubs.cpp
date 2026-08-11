@@ -9,6 +9,7 @@
  */
 
 #include "edgetx.h"
+#include "heartbeat_driver.h"
 #include "io/bootloader_flash.h"
 #include "io/frsky_firmware_update.h"
 #include "io/multi_firmware_update.h"
