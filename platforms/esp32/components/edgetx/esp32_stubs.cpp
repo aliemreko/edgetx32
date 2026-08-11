@@ -6,16 +6,13 @@
  * Symbols normally provided by main.cpp / lua until those modules are linked.
  */
 
+#include "heartbeat_driver.h"
+
 #include <stdint.h>
 
 uint8_t requiredSpeakerVolume = 255;
 
-volatile struct HeartbeatCapture {
-  uint8_t valid;
-#if defined(DEBUG_LATENCY)
-  uint32_t count;
-#endif
-} heartbeatCapture = {};
+volatile HeartbeatCapture heartbeatCapture = {};
 
 extern "C" void luaInitMainState() {}
 void luaInit() {}
