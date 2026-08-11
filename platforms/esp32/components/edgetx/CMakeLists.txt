@@ -219,6 +219,7 @@ if(NOT CMAKE_BUILD_EARLY_EXPANSION)
     GVARS
     HAPTIC
     CROSSFIRE
+    TIMERS=3
   )
 
   # EdgeTX still vendors FreeRTOS headers in some paths — prefer IDF's.

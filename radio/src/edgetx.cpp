@@ -1220,10 +1220,12 @@ void edgeTxResume()
   suspendI2CTasks = false;
   if (!sdMounted()) sdInit();
 
+#if defined(LUA)
   luaInitMainState();
-#if defined(COLORLCD) && defined(LUA)
+#if defined(COLORLCD)
   // reload widgets
   luaInitThemesAndWidgets();
+#endif
 #endif
 
   storageReadAll();
@@ -1539,12 +1541,14 @@ void edgeTxInit()
     logsInit();
   }
 
+#if defined(LUA)
   luaInitMainState();
-#if defined(COLORLCD) && defined(LUA)
+#if defined(COLORLCD)
   if (!UNEXPECTED_SHUTDOWN()) {
     // lua widget state must be prepared before the call to storageReadAll()
     luaInitThemesAndWidgets();
   }
+#endif
 #endif
 
   // handling of storage for radios
