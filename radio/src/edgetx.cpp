@@ -1673,6 +1673,10 @@ void edgeTxInit()
 extern "C" void initialise_monitor_handles();
 #endif
 
+#if defined(COLORLCD)
+extern "C" void initLvgl();
+#endif
+
 #if defined(SIMU)
 void simuMain()
 #elif defined(PCBESP32S3)
@@ -1710,9 +1714,7 @@ int main()
   pulsesInit();
 
 #if defined(COLORLCD)
-  // Do all lvgl init in case of fatal error on startup.
-  // edgeTxEsp32Main is extern "C"; force C++ linkage for initLvgl.
-  extern "C++" void initLvgl();
+  // Do all lvgl init in case of fatal error on startup
   initLvgl();
 #endif
 

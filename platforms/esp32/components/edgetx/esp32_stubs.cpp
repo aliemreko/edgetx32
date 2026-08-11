@@ -8,18 +8,11 @@
  * Colorlcd / LVGL / MainWindow / gyro are linked from real sources.
  */
 
-#include "heartbeat_driver.h"
-#include "hal/module_driver.h"
-#include "edgetx_types.h"
-#include "dataconstants.h"
-#include "edgetx_constants.h"
-#include "pulses/modules_constants.h"
-#include "translations/tts/tts.h"
+#include "edgetx.h"
 #include "io/bootloader_flash.h"
 #include "io/frsky_firmware_update.h"
 #include "io/multi_firmware_update.h"
-#include "gui/colorlcd/libui/popups.h"
-
+#include "translations/tts/tts.h"
 #include "FatFs/ff.h"
 
 #include <cstdint>
