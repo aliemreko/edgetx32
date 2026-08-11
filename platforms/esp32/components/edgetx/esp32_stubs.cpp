@@ -36,7 +36,7 @@ void gyroWakeup() {}
 
 // rtc.cpp calls into the board RTC driver
 void rtcdriver_settime(struct gtm*) {}
-void rtcSetTime(struct gtm*) {}
+void rtcSetTime(const struct gtm*) {}
 
 extern "C" void luaInitMainState() {}
 void luaInit() {}
@@ -53,7 +53,7 @@ void drawSleepBitmap() {}
 void runFatalErrorScreen(const char*) {}
 void POPUP_WARNING(const char*, const char*) {}
 void setRequestedMainView(uint8_t) {}
-void initLvgl() {}
+extern "C" void initLvgl() {}
 
 bool isInternalModuleAvailable(int moduleType)
 {
@@ -94,8 +94,10 @@ static const char* en_name() { return "English"; }
 static void tts_noop_number(int, uint8_t, uint8_t, uint8_t, uint8_t) {}
 static void tts_noop_duration(int, uint8_t, uint8_t, uint8_t) {}
 static const LanguagePack enLanguagePack = {"en", en_name, tts_noop_number, tts_noop_duration};
+extern const LanguagePack* currentLanguagePack;
 const LanguagePack* currentLanguagePack = &enLanguagePack;
 uint8_t currentLanguagePackIdx = 0;
+extern const LanguagePack* const languagePacks[];
 const LanguagePack* const languagePacks[] = {&enLanguagePack, nullptr};
 
 // --- GUI / colorlcd stubs (mangled names must match production headers) ---
