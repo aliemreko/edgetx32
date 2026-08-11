@@ -29,11 +29,6 @@ void gyroWakeup() {}
 void rtcdriver_settime(struct gtm*) {}
 void rtcSetTime(const struct gtm*) {}
 
-extern "C" void luaInitMainState() {}
-void luaInit() {}
-void luaClose() {}
-void luaTask() {}
-
 void frskyDSetDefault(int, uint16_t) {}
 void frskySportSetDefault(int, uint16_t, uint8_t, uint8_t) {}
 void spektrumSetDefault(int, uint16_t, uint8_t, uint8_t) {}

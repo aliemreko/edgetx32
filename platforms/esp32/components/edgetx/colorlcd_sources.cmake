@@ -91,6 +91,56 @@ set(COLORLCD_CORE_SRCS
   ${COLORLCD_DIR}/radio/radio_mic_recorder.cpp
 )
 
+# Embedded Lua (required by colorlcd tools / widgets / statistics)
+set(LUA_DIR ${RADIO_SRC}/thirdparty/Lua/src)
+set(LUA_CORE_SRCS
+  ${LUA_DIR}/lapi.c
+  ${LUA_DIR}/lcode.c
+  ${LUA_DIR}/lctype.c
+  ${LUA_DIR}/ldebug.c
+  ${LUA_DIR}/ldo.c
+  ${LUA_DIR}/ldump.c
+  ${LUA_DIR}/lfunc.c
+  ${LUA_DIR}/lgc.c
+  ${LUA_DIR}/llex.c
+  ${LUA_DIR}/lmem.c
+  ${LUA_DIR}/lobject.c
+  ${LUA_DIR}/lopcodes.c
+  ${LUA_DIR}/lparser.c
+  ${LUA_DIR}/lstate.c
+  ${LUA_DIR}/lstring.c
+  ${LUA_DIR}/ltable.c
+  ${LUA_DIR}/ltm.c
+  ${LUA_DIR}/lundump.c
+  ${LUA_DIR}/lvm.c
+  ${LUA_DIR}/lzio.c
+  ${LUA_DIR}/linit.c
+  ${LUA_DIR}/lbaselib.c
+  ${LUA_DIR}/lmathlib.c
+  ${LUA_DIR}/lbitlib.c
+  ${LUA_DIR}/loadlib.c
+  ${LUA_DIR}/lauxlib.c
+  ${LUA_DIR}/ltablib.c
+  ${LUA_DIR}/lcorolib.c
+  ${LUA_DIR}/liolib.c
+  ${LUA_DIR}/lstrlib.c
+)
+set(LUA_API_SRCS
+  ${RADIO_SRC}/lua/interface.cpp
+  ${RADIO_SRC}/lua/api_general.cpp
+  ${RADIO_SRC}/lua/api_model.cpp
+  ${RADIO_SRC}/lua/api_filesystem.cpp
+  ${RADIO_SRC}/lua/lua_event.cpp
+  ${RADIO_SRC}/lua/api_colorlcd.cpp
+  ${RADIO_SRC}/lua/api_colorlcd_lvgl.cpp
+  ${RADIO_SRC}/lua/widgets.cpp
+  ${RADIO_SRC}/lua/lua_widget.cpp
+  ${RADIO_SRC}/lua/lua_widget_factory.cpp
+  ${RADIO_SRC}/lua/lua_lvgl_widget.cpp
+  ${COLORLCD_DIR}/standalone_lua.cpp
+  ${COLORLCD_DIR}/model/model_mixer_scripts.cpp
+)
+
 set(COLORLCD_SUPPORT_SRCS
   ${RADIO_SRC}/main.cpp
   ${RADIO_SRC}/gui/gui_common.cpp
@@ -100,6 +150,8 @@ set(COLORLCD_SUPPORT_SRCS
   ${RADIO_SRC}/logs.cpp
   ${RADIO_SRC}/thirdparty/lz4/lz4.c
   ${RADIO_SRC}/translations/tts/tts_en.cpp
+  ${LUA_CORE_SRCS}
+  ${LUA_API_SRCS}
 )
 
 set(COLORLCD_ALL_SRCS
@@ -133,6 +185,7 @@ set(COLORLCD_INCLUDE_DIRS
   ${RADIO_SRC}/fonts/lvgl
   ${RADIO_SRC}/gui
   ${RADIO_SRC}/gui/common
+  ${LUA_DIR}
 )
 
 # Generate .lbm includes from PNGs into GEN_DIR (needed by bitmaps.cpp).
