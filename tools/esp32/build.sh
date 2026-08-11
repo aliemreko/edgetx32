@@ -10,6 +10,9 @@ if [[ -z "${IDF_PATH:-}" ]]; then
   exit 1
 fi
 
+# CI containers often check out as a different user than the build user.
+git config --global --add safe.directory "${ROOT}" || true
+
 cd "${IDF_PROJECT}"
 idf.py set-target esp32s3
 idf.py build "$@"
