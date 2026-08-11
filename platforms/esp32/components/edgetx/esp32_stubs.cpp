@@ -11,6 +11,8 @@
 #include "hal/module_driver.h"
 #include "edgetx_types.h"
 #include "dataconstants.h"
+#include "edgetx_constants.h"
+#include "pulses/modules_constants.h"
 
 #include <cstdint>
 #include <cstring>
