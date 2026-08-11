@@ -4,13 +4,14 @@ on:
   schedule:
     - cron: '0 2 * * *' # run at 2 AM UTC
   workflow_dispatch:
-  # Also rebuild when the nightly pipeline or firmware build entrypoint changes
   push:
     branches: [main]
     paths:
       - '.github/workflows/nightly.yml'
-      - 'tools/build-gh.sh'
-      - 'tools/build-common.sh'
+      - 'tools/esp32/**'
+      - 'platforms/esp32/**'
+      - 'radio/src/targets/esp32s3/**'
+      - 'radio/src/boards/hw_defs/esp32s3.json'
 
 concurrency:
   group: 'nightly'
@@ -18,61 +19,59 @@ concurrency:
 
 jobs:
   build:
-    name: Build firmware
+    name: Build ESP32-S3 firmware
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        target:
-          - nv14;el18
-          - pl18;pl18ev;pl18u
-          - pa01
-          - t12max
-          - t15;t16;t18;t22
-          - zorro;pocket;mt12;commando8
-          - tprov2;tpros;bumblebee
-          - t20;t20v2;t14
-          - tx12mk2;boxer;gx12
-          - tx16s
-          - tx16smk3
-          - f16
-          - v14;v14lcd;v16
-          - x10;x10express
-          - x12s
-          - x7access
-          - x9dp2019
-          - x9e;x9e-hall
-          - mt12
-          - nb4p
-          - st16
-          - c14
-          - tx15
-          - t15pro
-    container:
-      image: ghcr.io/edgetx/edgetx-dev:latest
-      volumes:
-        - ${{ github.workspace }}:/src
+    container: espressif/idf:v5.2.3
     steps:
       - name: Check out the repo
         uses: actions/checkout@v6
-        with:
-          submodules: recursive
 
-      - name: Build firmware ${{ matrix.target }}
+      - name: Install Python build deps
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Build EdgeTX32 (ESP32-S3)
         env:
-          FLAVOR: ${{ matrix.target }}
           EDGETX_VERSION_SUFFIX: nightly
-          CMAKE_BUILD_PARALLEL_LEVEL: 4
-        run: ./tools/build-gh.sh
+        run: |
+          . "${IDF_PATH}/export.sh"
+          ./tools/esp32/build.sh
 
-      - name: Package firmware ${{ matrix.target }}
+      - name: Stage release artifacts
+        run: |
+          set -euo pipefail
+          SHA_SHORT="$(git rev-parse --short HEAD)"
+          OUT_BIN="edgetx32-esp32s3-${SHA_SHORT}-nightly.bin"
+          SRC_BIN="platforms/esp32/build/edgetx-esp32s3.bin"
+          test -f "${SRC_BIN}"
+          cp "${SRC_BIN}" "${OUT_BIN}"
+          # Optional extras when present
+          for f in \
+            platforms/esp32/build/bootloader/bootloader.bin \
+            platforms/esp32/build/partition_table/partition-table.bin \
+            platforms/esp32/build/ota_data_initial.bin
+          do
+            if [[ -f "$f" ]]; then
+              cp "$f" "./$(basename "$f")"
+            fi
+          done
+          ls -la "${OUT_BIN}" *.bin
+          echo "artifact_bin=${OUT_BIN}" >> "${GITHUB_ENV}"
+
+      - name: Package firmware
         uses: actions/upload-artifact@v7
         with:
-          name: edgetx-firmware-nightly-${{ matrix.target }}
+          name: edgetx32-firmware-nightly-esp32s3
           path: |
             fw.json
             LICENSE
-            *.bin
-            *.uf2
+            NOTICE
+            README.md
+            edgetx32-esp32s3-*-nightly.bin
+            bootloader.bin
+            partition-table.bin
+            ota_data_initial.bin
           retention-days: 15
           if-no-files-found: error
 
@@ -91,29 +90,37 @@ jobs:
       - name: Download artifacts
         uses: actions/download-artifact@v8
         with:
-          pattern: edgetx-firmware-nightly-*
-          path: edgetx-firmware-nightly
+          pattern: edgetx32-firmware-nightly-*
+          path: edgetx32-firmware-nightly
           merge-multiple: true
 
-      - name: Compose release filename
+      - name: Compose release metadata
         run: |
-          echo "release_filename=edgetx-firmware-nightly-${GITHUB_SHA::8}.zip" >> $GITHUB_ENV
-          echo "build_date=$(date -u +'%Y-%m-%d %H:%M:%S UTC')" >> $GITHUB_ENV
-          echo "old_nightly_sha=$(git rev-parse nightly)" >> $GITHUB_ENV
+          set -euo pipefail
+          echo "release_filename=edgetx32-firmware-nightly-${GITHUB_SHA::8}.zip" >> "$GITHUB_ENV"
+          echo "build_date=$(date -u +'%Y-%m-%d %H:%M:%S UTC')" >> "$GITHUB_ENV"
+          if git rev-parse nightly >/dev/null 2>&1; then
+            echo "old_nightly_sha=$(git rev-parse nightly)" >> "$GITHUB_ENV"
+            echo "cliff_range=nightly..HEAD" >> "$GITHUB_ENV"
+          else
+            echo "old_nightly_sha=${GITHUB_SHA}" >> "$GITHUB_ENV"
+            echo "cliff_range=HEAD~1..HEAD" >> "$GITHUB_ENV"
+          fi
 
       - name: Zip release file
         uses: montudor/action-zip@v1
         with:
-          args: zip -qq -j -r ${{ env.release_filename }} ./edgetx-firmware-nightly
+          args: zip -qq -j -r ${{ env.release_filename }} ./edgetx32-firmware-nightly
 
       - name: Generate changelog
         id: changelog
         uses: orhun/git-cliff-action@v4
         with:
           config: cliff.toml
-          args: --verbose --strip all nightly..HEAD
+          args: --verbose --strip all ${{ env.cliff_range }}
         env:
           OUTPUT: CHANGELOG.md
+        continue-on-error: true
 
       - name: Update nightly tag
         run: |
@@ -124,27 +131,34 @@ jobs:
 
       - name: Delete previous nightly release
         run: |
-          # Delete the existing nightly release to avoid accumulating assets
           gh release delete nightly --yes || true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Deploy nightly release
-        uses: softprops/action-gh-release@v2 #softprops/action-gh-release/pull/670 or v3 to clear nodejs log warning
+        uses: softprops/action-gh-release@v2
         with:
           tag_name: nightly
           prerelease: true
-          name: "Nightly Build"
+          name: "EdgeTX32 Nightly (ESP32-S3)"
           body: |
-            ## Automated Nightly Build
+            ## Automated Nightly Build — EdgeTX32
 
+            **Target:** ESP32-S3
             **Commit:** ${{ github.sha }}
             **Built:** ${{ env.build_date }}
 
-            This is an automated nightly build of EdgeTX firmware. These builds are for testing purposes and may contain bugs. Please be sure to report any issues you encounter!
+            This is an automated nightly build of the EdgeTX32 ESP32-S3 fork. Builds are for testing and may contain bugs.
 
-            ### Installation
-            Download `${{ env.release_filename }}` and extract the firmware file for your radio model, or use [EdgeTX Buddy](https://buddy.edgetx.org/#/flash?version=nightly&source=releases&filters=includePrereleases) with the "Include pre-releases" Filter option enabled so you can select the "Nightly" version.
+            ### Flash
+            1. Download `${{ env.release_filename }}` and extract it
+            2. Flash with ESP-IDF / esptool, for example:
+               ```bash
+               esptool.py -p /dev/ttyACM0 write_flash 0x10000 edgetx32-esp32s3-*-nightly.bin
+               ```
+               Or from a full IDF tree: `idf.py -p /dev/ttyACM0 flash`
+
+            See [docs/esp32/BUILD.md](https://github.com/${{ github.repository }}/blob/main/docs/esp32/BUILD.md) for details.
 
             ## Changes since last nightly build
 
