@@ -10,6 +10,13 @@
 
 uint8_t requiredSpeakerVolume = 255;
 
+volatile struct HeartbeatCapture {
+  uint8_t valid;
+#if defined(DEBUG_LATENCY)
+  uint32_t count;
+#endif
+} heartbeatCapture = {};
+
 extern "C" void luaInitMainState() {}
 void luaInit() {}
 void luaClose() {}
