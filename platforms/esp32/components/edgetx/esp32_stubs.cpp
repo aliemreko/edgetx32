@@ -14,6 +14,9 @@ uint8_t requiredSpeakerVolume = 255;
 
 volatile HeartbeatCapture heartbeatCapture = {};
 
+int16_t gyroScaledX() { return 0; }
+int16_t gyroScaledY() { return 0; }
+
 extern "C" void luaInitMainState() {}
 void luaInit() {}
 void luaClose() {}

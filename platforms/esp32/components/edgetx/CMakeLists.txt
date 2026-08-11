@@ -214,7 +214,6 @@ if(NOT CMAKE_BUILD_EARLY_EXPANSION)
     ESP_PLATFORM
     PCBESP32S3
     PCBHORUS
-    # Reuse Horus/X10 YAML + storage layout until ESP32 gets its own schema.
     PCBX10
     COLORLCD
     HARDWARE_TOUCH
@@ -252,7 +251,6 @@ if(NOT CMAKE_BUILD_EARLY_EXPANSION)
     -Wno-unused-parameter
     -Wno-missing-field-initializers
     -Wno-error=format
-    # BitField<> templates can trip -Warray-bounds under inlining on GCC 13.
     -Wno-error=array-bounds
     -Wno-array-bounds
   )
