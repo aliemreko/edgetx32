@@ -19,7 +19,7 @@
  * GNU General Public License for more details.
  */
 
-#if !defined(SIMU)
+#if !defined(SIMU) && !defined(ESP_PLATFORM)
 #include "stm32_exti_driver.h"
 #include "stm32_hal_ll.h"
 #endif
@@ -349,6 +349,12 @@ static void _crsf_extmodule_frame_received()
   telemetryFrameTrigger_ISR(EXTERNAL_MODULE, &CrossfireDriver);
 }
 
+#if defined(ESP_PLATFORM)
+static void _crsf_extmodule_idle_cb(void*)
+{
+  _crsf_extmodule_frame_received();
+}
+#else
 // proxy trigger to avoid calling
 // FreeRTOS methods from ISR with prio 0
 static void _soft_irq_trigger(void* param)
@@ -367,6 +373,7 @@ static void _soft_irq_trigger(void* param)
   stm32_exti_trigger_swi(TELEMETRY_RX_FRAME_EXTI_LINE);
 #endif
 }
+#endif // !ESP_PLATFORM
 #endif
 
 #endif // !SIMU
@@ -411,6 +418,10 @@ static void* crossfireInit(uint8_t module)
 
 #if !defined(SIMU)
       if (drv && ctx && drv->setIdleCb) {
+#if defined(ESP_PLATFORM)
+        // Call telemetry handler directly; no STM32 EXTI soft-IRQ path.
+        drv->setIdleCb(ctx, _crsf_extmodule_idle_cb, nullptr);
+#else
         drv->setIdleCb(ctx, _soft_irq_trigger, &mod_st->rx);
 #if defined(TELEMETRY_USE_CUSTOM_EXTI)
         stm32_exti_custom_enable(TELEMETRY_RX_FRAME_EXTI_LINE, 3,
@@ -419,7 +430,7 @@ static void* crossfireInit(uint8_t module)
         stm32_exti_enable(TELEMETRY_RX_FRAME_EXTI_LINE, 0,
                           _crsf_extmodule_frame_received);
 #endif
-
+#endif
       }
 #endif
     }
@@ -442,7 +453,7 @@ static void crossfireDeInit(void* ctx)
   memset(&crossfireModuleStatus[modulePortGetModule(mod_st)], 0,
          sizeof(CrossfireModuleStatus));
 
-#if !defined(SIMU) && defined(HARDWARE_EXTERNAL_MODULE)
+#if !defined(SIMU) && !defined(ESP_PLATFORM) && defined(HARDWARE_EXTERNAL_MODULE)
   if (mod_st && (modulePortGetModule(mod_st) == EXTERNAL_MODULE)) {
     auto drv = modulePortGetSerialDrv(mod_st->rx);
     auto ctx = modulePortGetCtx(mod_st->rx);

@@ -25,6 +25,8 @@ extern uint16_t sessionTimer;
 
 #define SLAVE_MODE() (g_model.trainerData.mode == TRAINER_MODE_SLAVE)
 
+#define LUA_DEFAULT_BAUDRATE 115200
+
 void boardInit();
 void boardOff();
 
@@ -46,6 +48,10 @@ void EXTERNAL_MODULE_OFF();
 #define BATTERY_WARN                    74
 #define BATTERY_MIN                     68
 #define BATTERY_MAX                     86
+
+#define BACKLIGHT_LEVEL_MAX             100
+#define BACKLIGHT_LEVEL_MIN             1
+#define BACKLIGHT_FORCED_ON             (BACKLIGHT_LEVEL_MAX + 1)
 
 void pwrInit();
 void pwrOn();
@@ -85,4 +91,6 @@ void ledBlue();
 const etx_serial_port_t* auxSerialGetPort(int port_nr);
 
 bool touchPanelEventOccured();
-bool touchPanelRead();
+struct TouchState touchPanelRead();
+struct TouchState getInternalTouchState();
+void touchPanelInit();

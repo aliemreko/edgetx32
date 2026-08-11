@@ -70,7 +70,9 @@
 #define TOUCH_I2C_SDA               GPIO_PIN(GPIO, 15)
 #define TOUCH_I2C_SCL               GPIO_PIN(GPIO, 16)
 
+#ifndef MIXER_SCHEDULER_TIMER_FREQ
 #define MIXER_SCHEDULER_TIMER_FREQ  1000000u
+#endif
 
 // ESP32 platform enhancements
 #define ESP32_DUAL_CORE             1

@@ -381,7 +381,8 @@ void LvglWrapper::run()
   }
 }
 
-void initLvgl()
+// C linkage: called from edgeTxEsp32Main() which is extern "C".
+extern "C" void initLvgl()
 {
   LvglWrapper::instance();
 }

@@ -7,6 +7,15 @@
 #include "hal/adc_driver.h"
 #include "board.h"
 #include "esp32_gpio.h"
+#include "edgetx_types.h"
+#include "translations/translations.h"
+
+/* Pot config bit layout from myeeprom.h — avoid pulling datastructs/GUI. */
+#ifndef POT_CFG_BITS
+#define POT_CFG_TYPE_BITS 3
+#define POT_CFG_INV_BITS  1
+#define POT_CFG_BITS      (POT_CFG_TYPE_BITS + POT_CFG_INV_BITS)
+#endif
 
 #include "hal_adc_inputs.inc"
 

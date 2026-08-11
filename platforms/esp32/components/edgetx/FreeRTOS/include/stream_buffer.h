@@ -1,3 +1,3 @@
 #pragma once
-/* Compatibility shim: EdgeTX expects FreeRTOS/include/*.h ; ESP-IDF uses freertos/*.h */
+// Compatibility shim: EdgeTX FreeRTOS/include -> ESP-IDF freertos/
 #include "freertos/stream_buffer.h"

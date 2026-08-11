@@ -515,7 +515,12 @@ getvalue_t _getValue(mixsrc_t i, bool* valid)
     return 0;
 #endif
   } else if (i <= MIXSRC_LAST_TIMER) {
+#if defined(TIMERS)
     return timersStates[i - MIXSRC_FIRST_TIMER].val;
+#else
+    if (valid != nullptr) *valid = false;
+    return 0;
+#endif
   }
 
   else if (i <= MIXSRC_LAST_TELEM) {

@@ -342,7 +342,7 @@ STR(STRENGTH)
 STR(MENUCUSTOMSCRIPTS)
 #endif
 
-#if defined(DSM2) || defined(PXX) || defined(DSMP)
+#if defined(DSM2) || defined(PXX) || defined(DSMP) || defined(CROSSFIRE)
 STR(BIND_OK)
 STR(REBIND)
 STR(RECEIVER_NUM)

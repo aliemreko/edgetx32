@@ -5,14 +5,21 @@
  */
 
 #include "board.h"
+#include "touch.h"
 #include "esp32_gpio.h"
 
 #if defined(ESP_PLATFORM)
 #include "driver/i2c_master.h"
 #endif
 
+static TouchState s_touchState = {};
+TouchState touchState = {};
+
 bool touchPanelEventOccured() { return false; }
-bool touchPanelRead() { return false; }
+
+TouchState touchPanelRead() { return s_touchState; }
+
+TouchState getInternalTouchState() { return s_touchState; }
 
 void touchPanelInit()
 {

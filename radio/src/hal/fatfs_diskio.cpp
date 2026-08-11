@@ -91,7 +91,7 @@ uint8_t fatfsGetLun(uint8_t pdrv)
   return _fatfs_drives[pdrv].lun;
 }
 
-#if FF_FS_REENTRANT != 0
+#if FF_FS_REENTRANT != 0 && !defined(ESP_PLATFORM)
 
 int ff_mutex_create(int vol)
 {
@@ -155,7 +155,7 @@ DRESULT disk_ioctl(BYTE pdrv, BYTE cmd, void* buff)
   return drv->ioctl(lun, cmd, buff);
 }
 
-#if FF_FS_NORTC == 0
+#if FF_FS_NORTC == 0 && !defined(ESP_PLATFORM)
 
 #include "rtc.h"
 

@@ -34,6 +34,11 @@
 
 #include "chksize.h"
 
+#if defined(ESP_PLATFORM)
+/* ESP32 EEPROM layout is not locked to STM32 Horus sizes yet. */
+static inline void check_struct() {}
+#else
+
 #define CHKSIZE(x, y) check_size<struct x, y>()
 #define CHKTYPE(x, y) check_size<x, y>()
 
@@ -132,5 +137,6 @@ static inline void check_struct()
 
 #undef CHKSIZE
 }
+#endif /* !ESP_PLATFORM */
 #endif /* BACKUP */
 #endif /* !BOOT */

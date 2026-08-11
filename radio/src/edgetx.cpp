@@ -21,7 +21,7 @@
 
 #include "os/sleep.h"
 #include "os/time.h"
-#if !defined(SIMU)
+#if !defined(SIMU) && !defined(ESP_PLATFORM)
 #include "stm32_rgbleds.h"
 #include "boards/generic_stm32/rgb_leds.h"
 #include "stm32_hal.h"
@@ -76,6 +76,10 @@
 #include <malloc.h>
 #endif
 
+#if defined(ESP_PLATFORM)
+#include <esp_heap_caps.h>
+#endif
+
 #if defined(LUA)
 #include "lua/lua_states.h"
 #include "lua/custom_allocator.h"
@@ -101,7 +105,11 @@ uint8_t heartbeat;
 safetych_t safetyCh[MAX_OUTPUT_CHANNELS];
 #endif
 
+#if defined(ESP_PLATFORM)
+union ReusableBuffer reusableBuffer __SDRAM;
+#else
 union ReusableBuffer reusableBuffer __DMA;
+#endif
 
 #if defined(DEBUG_LATENCY)
 uint8_t latencyToggleSwitch = 0;
@@ -1220,10 +1228,12 @@ void edgeTxResume()
   suspendI2CTasks = false;
   if (!sdMounted()) sdInit();
 
+#if defined(LUA)
   luaInitMainState();
-#if defined(COLORLCD) && defined(LUA)
+#if defined(COLORLCD)
   // reload widgets
   luaInitThemesAndWidgets();
+#endif
 #endif
 
   storageReadAll();
@@ -1539,12 +1549,14 @@ void edgeTxInit()
     logsInit();
   }
 
+#if defined(LUA)
   luaInitMainState();
-#if defined(COLORLCD) && defined(LUA)
+#if defined(COLORLCD)
   if (!UNEXPECTED_SHUTDOWN()) {
     // lua widget state must be prepared before the call to storageReadAll()
     luaInitThemesAndWidgets();
   }
+#endif
 #endif
 
   // handling of storage for radios
@@ -1665,6 +1677,10 @@ void edgeTxInit()
 extern "C" void initialise_monitor_handles();
 #endif
 
+#if defined(COLORLCD)
+extern "C" void initLvgl();
+#endif
+
 #if defined(SIMU)
 void simuMain()
 #elif defined(PCBESP32S3)
@@ -1703,7 +1719,6 @@ int main()
 
 #if defined(COLORLCD)
   // Do all lvgl init in case of fatal error on startup
-  extern void initLvgl();
   initLvgl();
 #endif
 
@@ -2001,6 +2016,8 @@ uint32_t availableMemory()
 {
 #if defined(SIMU)
   return 1000;
+#elif defined(ESP_PLATFORM)
+  return (uint32_t)heap_caps_get_free_size(MALLOC_CAP_8BIT);
 #else
   extern unsigned char *heap;
   extern int _heap_end;

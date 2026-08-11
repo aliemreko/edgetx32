@@ -8,6 +8,7 @@
 #include "hal/gpio.h"
 #include "esp32_gpio.h"
 #include "board.h"
+#include "dataconstants.h"
 
 #include "hal_keys.inc"
 
@@ -34,4 +35,9 @@ uint32_t readKeys()
 uint32_t readTrims()
 {
   return _read_trims();
+}
+
+void pollKeys()
+{
+  // EdgeTX keys.cpp drives higher-level debounce from this hook.
 }

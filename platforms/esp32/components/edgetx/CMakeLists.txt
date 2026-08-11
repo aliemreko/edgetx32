@@ -13,6 +13,27 @@ set(HW_GEN "${RADIO_SRC}/../util/hw_defs/generate_hw_def.py")
 set(GEN_DIR "${CMAKE_CURRENT_BINARY_DIR}/generated")
 file(MAKE_DIRECTORY ${GEN_DIR})
 
+# Version stamp header (normally produced by radio/src/CMakeLists.txt)
+string(TIMESTAMP _ETX_DATE "%Y-%m-%d")
+string(TIMESTAMP _ETX_TIME "%H:%M:%S")
+string(TIMESTAMP BUILD_YEAR "%Y")
+set(DATE "${_ETX_DATE}")
+set(TIME "${_ETX_TIME}")
+set(VERSION_MAJOR "3")
+set(VERSION_MINOR "0")
+set(VERSION_REVISION "0")
+set(VERSION "3.0.0")
+set(VERSION_PREFIX "pre-")
+set(VERSION_SUFFIX "-esp32")
+set(CODENAME "esp32s3")
+set(GIT_STR "esp32")
+# Optional tag left undefined for #cmakedefine
+configure_file(
+  "${RADIO_SRC}/stamp.h.in"
+  "${GEN_DIR}/stamp.h"
+  @ONLY
+)
+
 set(GEN_TEMPLATES
   hal_settings:hal_settings.h
   hal_keys:hal_keys.inc
@@ -77,8 +98,13 @@ set(ESP32_HAL_SRCS
   ${ESP32_TARGET}/wifi_telemetry.cpp
   ${ESP32_TARGET}/ble_trainer.cpp
   ${ESP32_TARGET}/esp32_affinity.cpp
+  ${ESP32_TARGET}/dma2d.cpp
   ${CMAKE_CURRENT_LIST_DIR}/edgetx_esp32_start.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/esp32_stubs.cpp
 )
+
+# Real colorlcd GUI + LVGL (replaces previous GUI stubs)
+include(${CMAKE_CURRENT_LIST_DIR}/colorlcd_sources.cmake)
 
 # Portable HAL helpers
 # Note: hal/storage.cpp pulls STM32 diskio_spi — ESP32 uses sd_diskio.cpp instead.
@@ -116,6 +142,11 @@ set(EDGETX_CORE_SRCS
   ${RADIO_SRC}/sdcard.cpp
   ${RADIO_SRC}/lib_file.cpp
   ${RADIO_SRC}/debug.cpp
+  ${RADIO_SRC}/rtc.cpp
+  ${RADIO_SRC}/input_mapping.cpp
+  ${RADIO_SRC}/inactivity_timer.cpp
+  ${RADIO_SRC}/model_audio.cpp
+  ${RADIO_SRC}/translations/translations.cpp
   ${RADIO_SRC}/os/async_freertos.cpp
   ${RADIO_SRC}/os/sleep_freertos.cpp
   ${RADIO_SRC}/os/task_freertos.cpp
@@ -123,12 +154,31 @@ set(EDGETX_CORE_SRCS
   ${RADIO_SRC}/os/timer_freertos.cpp
 )
 
-# Protocols + telemetry (UART modules: CRSF/ELRS, Multi, Ghost, ...)
-file(GLOB PULSES_SRCS "${RADIO_SRC}/pulses/*.cpp")
-file(GLOB TELEMETRY_SRCS "${RADIO_SRC}/telemetry/*.cpp")
-file(GLOB STORAGE_SRCS
-  "${RADIO_SRC}/storage/*.cpp"
-  "${RADIO_SRC}/storage/yaml/*.cpp"
+# Protocols + telemetry: only sources matching enabled feature flags.
+# (A full GLOB pulls Multi/PXX/AFHDS/etc. that need extra defines and STM32 deps.)
+set(PULSES_SRCS
+  ${RADIO_SRC}/pulses/pulses.cpp
+  ${RADIO_SRC}/pulses/modules_helpers.cpp
+  ${RADIO_SRC}/pulses/crossfire.cpp
+)
+set(TELEMETRY_SRCS
+  ${RADIO_SRC}/telemetry/telemetry.cpp
+  ${RADIO_SRC}/telemetry/telemetry_sensors.cpp
+  ${RADIO_SRC}/telemetry/crossfire.cpp
+)
+# yaml_datastructs_<board>.cpp files are #included by yaml_datastructs.cpp — do not compile them alone.
+# Skip STM32 BKPSRAM rtc_backup / rlc path (needs generated datacopy.inc + BKPSRAM_BASE).
+set(STORAGE_SRCS
+  ${RADIO_SRC}/storage/modelslist.cpp
+  ${RADIO_SRC}/storage/sdcard_common.cpp
+  ${RADIO_SRC}/storage/sdcard_yaml.cpp
+  ${RADIO_SRC}/storage/storage_common.cpp
+  ${RADIO_SRC}/storage/yaml/yaml_bits.cpp
+  ${RADIO_SRC}/storage/yaml/yaml_datastructs.cpp
+  ${RADIO_SRC}/storage/yaml/yaml_labelslist.cpp
+  ${RADIO_SRC}/storage/yaml/yaml_modelslist.cpp
+  ${RADIO_SRC}/storage/yaml/yaml_parser.cpp
+  ${RADIO_SRC}/storage/yaml/yaml_tree_walker.cpp
 )
 
 idf_component_register(
@@ -138,14 +188,14 @@ idf_component_register(
     ${PULSES_SRCS}
     ${TELEMETRY_SRCS}
     ${STORAGE_SRCS}
+    ${COLORLCD_ALL_SRCS}
   INCLUDE_DIRS
     ${RADIO_SRC}
     ${ESP32_TARGET}
     ${GEN_DIR}
     ${RADIO_SRC}/thirdparty
     ${RADIO_SRC}/thirdparty/FatFs
-    ${RADIO_SRC}/gui/colorlcd
-    ${RADIO_SRC}/gui/common
+    ${COLORLCD_INCLUDE_DIRS}
     ${CMAKE_CURRENT_LIST_DIR}
     ${CMAKE_CURRENT_LIST_DIR}/FreeRTOS/include
     ${CMAKE_CURRENT_LIST_DIR}/FreeRTOS
@@ -156,17 +206,24 @@ idf_component_register(
 )
 
 if(NOT CMAKE_BUILD_EARLY_EXPANSION)
-  add_dependencies(${COMPONENT_LIB} edgetx_hw_gen)
+  add_dependencies(${COMPONENT_LIB} edgetx_hw_gen edgetx_colorlcd_bitmaps)
 
   target_compile_definitions(${COMPONENT_LIB} PUBLIC
     FREE_RTOS
     ESP_PLATFORM
     PCBESP32S3
     PCBHORUS
+    PCBX10
     COLORLCD
+    GUI
+    LCD_W=480
+    LCD_H=272
     HARDWARE_TOUCH
     HARDWARE_KEYS
+    HARDWARE_INTERNAL_MODULE
+    HARDWARE_EXTERNAL_MODULE
     SOFTWARE_KEYBOARD
+    ROTARY_ENCODER_NAVIGATION
     RTCLOCK
     USE_WATCHDOG
     DISABLE_MCUCHECK
@@ -183,6 +240,21 @@ if(NOT CMAKE_BUILD_EARLY_EXPANSION)
     THREADSAFE_MALLOC
     CORRECT_NEGATIVE_SHIFTS
     STORAGE_MODELSLIST
+    AUDIO
+    GVARS
+    HAPTIC
+    CROSSFIRE
+    THRTRACE
+    BATTGRAPH
+    AUTOSOURCE
+    TIMERS=3
+    LUA
+    LUA_INPUTS=1
+    LUA_MODEL_SCRIPTS
+    LUA_COMPAT_5_2
+    IMU=1
+    LV_CONF_INCLUDE_SIMPLE
+    LV_LVGL_H_INCLUDE_SIMPLE
   )
 
   # EdgeTX still vendors FreeRTOS headers in some paths — prefer IDF's.
@@ -190,5 +262,7 @@ if(NOT CMAKE_BUILD_EARLY_EXPANSION)
     -Wno-unused-parameter
     -Wno-missing-field-initializers
     -Wno-error=format
+    -Wno-error=array-bounds
+    -Wno-array-bounds
   )
 endif()

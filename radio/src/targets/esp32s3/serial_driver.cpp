@@ -189,7 +189,7 @@ static void uart_set_polarity(void* c, uint8_t polarity)
 #endif
 }
 
-const etx_serial_driver_t Esp32SerialDriver = {
+extern const etx_serial_driver_t Esp32SerialDriver = {
   .init = uart_init,
   .deinit = uart_deinit,
   .sendByte = uart_send_byte,
@@ -213,4 +213,3 @@ const etx_serial_driver_t Esp32SerialDriver = {
 
 void* esp32InternalModuleHwDef() { return &s_int; }
 void* esp32ExternalModuleHwDef() { return &s_ext; }
-extern const etx_serial_driver_t Esp32SerialDriver;

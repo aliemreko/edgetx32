@@ -48,7 +48,8 @@ extern "C" void esp32WifiTelemetrySendJson(const char* json)
   dest.sin_family = AF_INET;
   dest.sin_port = htons(9070);
   dest.sin_addr.s_addr = htonl(INADDR_BROADCAST);
-  setsockopt(sock, SOL_SOCKET, SO_BROADCAST, (int[]){1}, sizeof(int));
+  int broadcast = 1;
+  setsockopt(sock, SOL_SOCKET, SO_BROADCAST, &broadcast, sizeof(broadcast));
   sendto(sock, json, strlen(json), 0, (sockaddr*)&dest, sizeof(dest));
   close(sock);
 }

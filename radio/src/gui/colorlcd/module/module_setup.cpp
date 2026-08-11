@@ -26,6 +26,7 @@
 #include "channel_range.h"
 #include "choice.h"
 #include "custom_failsafe.h"
+#include "dialog.h"
 #include "edgetx.h"
 #include "etx_lv_theme.h"
 #include "form.h"
