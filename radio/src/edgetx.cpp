@@ -105,7 +105,11 @@ uint8_t heartbeat;
 safetych_t safetyCh[MAX_OUTPUT_CHANNELS];
 #endif
 
+#if defined(ESP_PLATFORM)
+union ReusableBuffer reusableBuffer __SDRAM;
+#else
 union ReusableBuffer reusableBuffer __DMA;
+#endif
 
 #if defined(DEBUG_LATENCY)
 uint8_t latencyToggleSwitch = 0;
