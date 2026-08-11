@@ -139,7 +139,6 @@ idf_component_register(
     ${TELEMETRY_SRCS}
     ${STORAGE_SRCS}
   INCLUDE_DIRS
-    ${CMAKE_CURRENT_LIST_DIR}
     ${RADIO_SRC}
     ${ESP32_TARGET}
     ${GEN_DIR}
@@ -147,6 +146,7 @@ idf_component_register(
     ${RADIO_SRC}/thirdparty/FatFs
     ${RADIO_SRC}/gui/colorlcd
     ${RADIO_SRC}/gui/common
+    ${CMAKE_CURRENT_LIST_DIR}
     ${CMAKE_CURRENT_LIST_DIR}/FreeRTOS/include
     ${CMAKE_CURRENT_LIST_DIR}/FreeRTOS
   REQUIRES
