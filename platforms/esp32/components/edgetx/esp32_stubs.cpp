@@ -13,7 +13,6 @@
 #include "io/bootloader_flash.h"
 #include "io/frsky_firmware_update.h"
 #include "io/multi_firmware_update.h"
-#include "translations/tts/tts.h"
 #include "FatFs/ff.h"
 
 #include <cstdint>
@@ -41,9 +40,6 @@ void trainer_stop_module_cppm() {}
 void sbusAuxSetEnabled(bool) {}
 void sbusSetReceiveCtx(void*, const etx_serial_driver_t*) {}
 void sbusAuxFrameReceived(void*) {}
-
-// English TTS pack is linked from tts_en.cpp; only EN is available on ESP32 yet.
-const LanguagePack* const languagePacks[] = {&enLanguagePack, nullptr};
 
 // IDF FatFs is linked without relative-path support; provide no-op RPATH APIs.
 extern "C" {

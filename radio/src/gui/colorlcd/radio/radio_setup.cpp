@@ -19,11 +19,8 @@
  * GNU General Public License for more details.
  */
 
+#if !defined(ESP_PLATFORM)
 #define LANGUAGE_PACKS_DEFINITION
-
-#if defined(ESP_PLATFORM)
-// ESP32 ships English TTS only; languagePacks[] comes from esp32_stubs.cpp.
-#undef LANGUAGE_PACKS_DEFINITION
 #endif
 
 #include "radio_setup.h"
@@ -46,6 +43,11 @@
 #include "tasks/mixer_task.h"
 #include "textedit.h"
 #include "toggleswitch.h"
+
+#if defined(ESP_PLATFORM)
+// English TTS only on ESP32; define here so DIM(languagePacks) sees a complete type.
+const LanguagePack* const languagePacks[] = {&enLanguagePack, nullptr};
+#endif
 
 #define SET_DIRTY() storageDirty(EE_GENERAL)
 
