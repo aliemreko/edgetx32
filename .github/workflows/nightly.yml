@@ -4,6 +4,13 @@ on:
   schedule:
     - cron: '0 2 * * *' # run at 2 AM UTC
   workflow_dispatch:
+  # Also rebuild when the nightly pipeline or firmware build entrypoint changes
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/nightly.yml'
+      - 'tools/build-gh.sh'
+      - 'tools/build-common.sh'
 
 concurrency:
   group: 'nightly'
