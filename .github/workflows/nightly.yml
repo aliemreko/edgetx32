@@ -33,6 +33,8 @@ jobs:
         run: |
           set -euo pipefail
           . "${IDF_PATH}/export.sh"
+          git config --global --add safe.directory "${GITHUB_WORKSPACE}"
+          git config --global --add safe.directory /__w/edgetx32/edgetx32 || true
           python -m pip install --upgrade pip
           python -m pip install -r requirements.txt
           ./tools/esp32/build.sh

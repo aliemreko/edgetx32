@@ -28,22 +28,26 @@ set(GEN_TEMPLATES
   esp32_adc_inputs:esp32_adc_inputs.inc
 )
 
-set(GEN_OUTPUTS "")
-foreach(pair ${GEN_TEMPLATES})
-  string(REPLACE ":" ";" parts ${pair})
-  list(GET parts 0 tmpl)
-  list(GET parts 1 out)
-  set(out_path "${GEN_DIR}/${out}")
-  add_custom_command(
-    OUTPUT ${out_path}
-    COMMAND python3 ${HW_GEN} -t ${RADIO_SRC}/../util/hw_defs/${tmpl}.jinja -T esp32s3 ${HW_JSON} > ${out_path}
-    DEPENDS ${HW_JSON} ${RADIO_SRC}/../util/hw_defs/${tmpl}.jinja
-    COMMENT "Generating ${out}"
-    VERBATIM
-  )
-  list(APPEND GEN_OUTPUTS ${out_path})
-endforeach()
-add_custom_target(edgetx_hw_gen DEPENDS ${GEN_OUTPUTS})
+# ESP-IDF includes this file in script mode during early expansion to collect
+# REQUIRES. Commands like add_custom_command are not allowed in that pass.
+if(NOT CMAKE_BUILD_EARLY_EXPANSION)
+  set(GEN_OUTPUTS "")
+  foreach(pair ${GEN_TEMPLATES})
+    string(REPLACE ":" ";" parts ${pair})
+    list(GET parts 0 tmpl)
+    list(GET parts 1 out)
+    set(out_path "${GEN_DIR}/${out}")
+    add_custom_command(
+      OUTPUT ${out_path}
+      COMMAND bash -c "python3 '${HW_GEN}' -t '${RADIO_SRC}/../util/hw_defs/${tmpl}.jinja' -T esp32s3 '${HW_JSON}' > '${out_path}'"
+      DEPENDS ${HW_JSON} ${RADIO_SRC}/../util/hw_defs/${tmpl}.jinja ${HW_GEN}
+      COMMENT "Generating ${out}"
+      VERBATIM
+    )
+    list(APPEND GEN_OUTPUTS ${out_path})
+  endforeach()
+  add_custom_target(edgetx_hw_gen DEPENDS ${GEN_OUTPUTS})
+endif()
 
 set(ESP32_HAL_SRCS
   ${ESP32_TARGET}/board.cpp
@@ -151,38 +155,40 @@ idf_component_register(
     heap
 )
 
-add_dependencies(${COMPONENT_LIB} edgetx_hw_gen)
+if(NOT CMAKE_BUILD_EARLY_EXPANSION)
+  add_dependencies(${COMPONENT_LIB} edgetx_hw_gen)
 
-target_compile_definitions(${COMPONENT_LIB} PUBLIC
-  FREE_RTOS
-  ESP_PLATFORM
-  PCBESP32S3
-  PCBHORUS
-  COLORLCD
-  HARDWARE_TOUCH
-  HARDWARE_KEYS
-  SOFTWARE_KEYBOARD
-  RTCLOCK
-  USE_WATCHDOG
-  DISABLE_MCUCHECK
-  ESP32_DUAL_CORE
-  ESP32_PSRAM_FRAMEBUFFER
-  ESP32_WIFI_TELEMETRY
-  ESP32_BLE_TRAINER
-  INTERNAL_MODULE_CRSF
-  DEFAULT_INTERNAL_MODULE=MODULE_TYPE_CROSSFIRE
-  FLAVOUR=\"esp32s3\"
-  TRANSLATIONS_EN
-  TRANSLATIONS=\"EN\"
-  TRANSLATION_IS_RTL=0
-  THREADSAFE_MALLOC
-  CORRECT_NEGATIVE_SHIFTS
-  STORAGE_MODELSLIST
-)
+  target_compile_definitions(${COMPONENT_LIB} PUBLIC
+    FREE_RTOS
+    ESP_PLATFORM
+    PCBESP32S3
+    PCBHORUS
+    COLORLCD
+    HARDWARE_TOUCH
+    HARDWARE_KEYS
+    SOFTWARE_KEYBOARD
+    RTCLOCK
+    USE_WATCHDOG
+    DISABLE_MCUCHECK
+    ESP32_DUAL_CORE
+    ESP32_PSRAM_FRAMEBUFFER
+    ESP32_WIFI_TELEMETRY
+    ESP32_BLE_TRAINER
+    INTERNAL_MODULE_CRSF
+    DEFAULT_INTERNAL_MODULE=MODULE_TYPE_CROSSFIRE
+    FLAVOUR=\"esp32s3\"
+    TRANSLATIONS_EN
+    TRANSLATIONS=\"EN\"
+    TRANSLATION_IS_RTL=0
+    THREADSAFE_MALLOC
+    CORRECT_NEGATIVE_SHIFTS
+    STORAGE_MODELSLIST
+  )
 
-# EdgeTX still vendors FreeRTOS headers in some paths — prefer IDF's.
-target_compile_options(${COMPONENT_LIB} PRIVATE
-  -Wno-unused-parameter
-  -Wno-missing-field-initializers
-  -Wno-error=format
-)
+  # EdgeTX still vendors FreeRTOS headers in some paths — prefer IDF's.
+  target_compile_options(${COMPONENT_LIB} PRIVATE
+    -Wno-unused-parameter
+    -Wno-missing-field-initializers
+    -Wno-error=format
+  )
+endif()
