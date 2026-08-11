@@ -8,7 +8,6 @@
 #include "hal/gpio.h"
 #include "esp32_gpio.h"
 #include "definitions.h"
-#include "myeeprom.h"
 
 #include <string.h>
 

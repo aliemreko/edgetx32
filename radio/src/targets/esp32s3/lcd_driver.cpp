@@ -11,9 +11,9 @@
 #include <cstdlib>
 
 #if defined(ESP_PLATFORM)
-#include "esp32_idf_gpio.h"
 #include "esp_heap_caps.h"
 #include "driver/spi_master.h"
+#include "driver/gpio.h"
 #include "esp_lcd_panel_io.h"
 #include "esp_lcd_panel_ops.h"
 #include "esp_lcd_panel_vendor.h"
