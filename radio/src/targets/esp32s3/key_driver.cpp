@@ -8,6 +8,7 @@
 #include "hal/gpio.h"
 #include "esp32_gpio.h"
 #include "board.h"
+#include "dataconstants.h"
 
 #include "hal_keys.inc"
 
