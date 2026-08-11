@@ -155,7 +155,7 @@ DRESULT disk_ioctl(BYTE pdrv, BYTE cmd, void* buff)
   return drv->ioctl(lun, cmd, buff);
 }
 
-#if FF_FS_NORTC == 0
+#if FF_FS_NORTC == 0 && !defined(ESP_PLATFORM)
 
 #include "rtc.h"
 
