@@ -67,7 +67,7 @@ void gpio_init_af(gpio_t pin, gpio_af_t af, gpio_speed_t speed)
   // Peripheral drivers configure AF via ESP-IDF drivers directly.
 }
 
-void gpio_init_int(gpio_t pin, etx_gpio_mode_t mode, gpio_flank_t flank, gpio_cb_t cb)
+void gpio_init_int(gpio_t pin, etx_pin_mode_t mode, gpio_flank_t flank, gpio_cb_t cb)
 {
 #if defined(ESP_PLATFORM)
   gpio_init(pin, mode, GPIO_PIN_SPEED_LOW);
@@ -99,13 +99,13 @@ void gpio_int_disable(gpio_t pin)
 
 void gpio_set_af(gpio_t pin, gpio_af_t af) { (void)pin; (void)af; }
 
-etx_gpio_mode_t gpio_get_mode(gpio_t pin)
+etx_pin_mode_t gpio_get_mode(gpio_t pin)
 {
 #if defined(ESP_PLATFORM)
   (void)pin;
   return GPIO_IN;
 #else
-  return (etx_gpio_mode_t)g_modes[esp32_gpio_num(pin)];
+  return (etx_pin_mode_t)g_modes[esp32_gpio_num(pin)];
 #endif
 }
 
