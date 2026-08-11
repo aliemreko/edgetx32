@@ -29,7 +29,7 @@
 #include "switches.h"
 #include "board.h"
 
-#if !defined(SIMU)
+#if !defined(SIMU) && !defined(ESP_PLATFORM)
 #include "usbd_msc_conf.h"
 #endif
 

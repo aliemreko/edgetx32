@@ -21,7 +21,7 @@
 
 #include "os/sleep.h"
 #include "os/time.h"
-#if !defined(SIMU)
+#if !defined(SIMU) && !defined(ESP_PLATFORM)
 #include "stm32_rgbleds.h"
 #include "boards/generic_stm32/rgb_leds.h"
 #include "stm32_hal.h"
