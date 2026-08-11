@@ -99,6 +99,7 @@ set(ESP32_HAL_SRCS
   ${ESP32_TARGET}/ble_trainer.cpp
   ${ESP32_TARGET}/esp32_affinity.cpp
   ${CMAKE_CURRENT_LIST_DIR}/edgetx_esp32_start.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/esp32_stubs.cpp
 )
 
 # Portable HAL helpers
@@ -214,6 +215,10 @@ if(NOT CMAKE_BUILD_EARLY_EXPANSION)
     THREADSAFE_MALLOC
     CORRECT_NEGATIVE_SHIFTS
     STORAGE_MODELSLIST
+    AUDIO
+    GVARS
+    HAPTIC
+    CROSSFIRE
   )
 
   # EdgeTX still vendors FreeRTOS headers in some paths — prefer IDF's.
