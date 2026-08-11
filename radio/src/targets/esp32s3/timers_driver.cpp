@@ -10,8 +10,6 @@
 #include "esp_timer.h"
 #endif
 
-volatile tmr10ms_t g_tmr10ms = 0;
-
 uint32_t timersGetMsTick()
 {
 #if defined(ESP_PLATFORM)

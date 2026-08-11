@@ -29,13 +29,7 @@ bool pwrPressed()
 
 bool pwrOffPressed() { return pwrPressed(); }
 
-// pwrPressedDuration() is implemented in edgetx.cpp when PWR_BUTTON_PRESS is set.
-
-uint32_t pwrCheck()
-{
-  // e_power_on — keep running; full FSM uses EdgeTX power helpers.
-  return 1;
-}
+// pwrCheck() lives in edgetx.cpp (non-PWR_BUTTON_PRESS path).
 
 void pwrResetHandler() {}
 

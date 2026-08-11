@@ -109,7 +109,6 @@ list(APPEND ESP32_HAL_SRCS
   ${RADIO_SRC}/hal/key_driver.cpp
   ${RADIO_SRC}/hal/switch_driver.cpp
   ${RADIO_SRC}/hal/module_port.cpp
-  ${RADIO_SRC}/hal/fatfs_diskio.cpp
   ${RADIO_SRC}/hal/usb_driver.cpp
 )
 
