@@ -36,3 +36,8 @@ uint32_t readTrims()
 {
   return _read_trims();
 }
+
+void pollKeys()
+{
+  // EdgeTX keys.cpp drives higher-level debounce from this hook.
+}

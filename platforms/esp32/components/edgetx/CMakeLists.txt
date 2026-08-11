@@ -138,6 +138,11 @@ set(EDGETX_CORE_SRCS
   ${RADIO_SRC}/sdcard.cpp
   ${RADIO_SRC}/lib_file.cpp
   ${RADIO_SRC}/debug.cpp
+  ${RADIO_SRC}/rtc.cpp
+  ${RADIO_SRC}/input_mapping.cpp
+  ${RADIO_SRC}/inactivity_timer.cpp
+  ${RADIO_SRC}/model_audio.cpp
+  ${RADIO_SRC}/translations/translations.cpp
   ${RADIO_SRC}/os/async_freertos.cpp
   ${RADIO_SRC}/os/sleep_freertos.cpp
   ${RADIO_SRC}/os/task_freertos.cpp
@@ -216,6 +221,8 @@ if(NOT CMAKE_BUILD_EARLY_EXPANSION)
     PCBHORUS
     PCBX10
     COLORLCD
+    LCD_W=480
+    LCD_H=272
     HARDWARE_TOUCH
     HARDWARE_KEYS
     HARDWARE_INTERNAL_MODULE
