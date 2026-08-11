@@ -343,7 +343,7 @@
 #define STR_MENUCUSTOMSCRIPTS currentLangStrings->STR_MENUCUSTOMSCRIPTS
 #endif
 
-#if defined(DSM2) || defined(PXX) || defined(DSMP)
+#if defined(DSM2) || defined(PXX) || defined(DSMP) || defined(CROSSFIRE)
 #define STR_BIND_OK currentLangStrings->STR_BIND_OK
 #define STR_REBIND currentLangStrings->STR_REBIND
 #define STR_RECEIVER_NUM currentLangStrings->STR_RECEIVER_NUM
