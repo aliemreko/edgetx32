@@ -227,5 +227,8 @@ if(NOT CMAKE_BUILD_EARLY_EXPANSION)
     -Wno-unused-parameter
     -Wno-missing-field-initializers
     -Wno-error=format
+    # BitField<> templates can trip -Warray-bounds under inlining on GCC 13.
+    -Wno-error=array-bounds
+    -Wno-array-bounds
   )
 endif()
