@@ -25,6 +25,8 @@ extern uint16_t sessionTimer;
 
 #define SLAVE_MODE() (g_model.trainerData.mode == TRAINER_MODE_SLAVE)
 
+#define LUA_DEFAULT_BAUDRATE 115200
+
 void boardInit();
 void boardOff();
 
