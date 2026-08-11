@@ -13,6 +13,27 @@ set(HW_GEN "${RADIO_SRC}/../util/hw_defs/generate_hw_def.py")
 set(GEN_DIR "${CMAKE_CURRENT_BINARY_DIR}/generated")
 file(MAKE_DIRECTORY ${GEN_DIR})
 
+# Version stamp header (normally produced by radio/src/CMakeLists.txt)
+string(TIMESTAMP _ETX_DATE "%Y-%m-%d")
+string(TIMESTAMP _ETX_TIME "%H:%M:%S")
+string(TIMESTAMP BUILD_YEAR "%Y")
+set(DATE "${_ETX_DATE}")
+set(TIME "${_ETX_TIME}")
+set(VERSION_MAJOR "3")
+set(VERSION_MINOR "0")
+set(VERSION_REVISION "0")
+set(VERSION "3.0.0")
+set(VERSION_PREFIX "pre-")
+set(VERSION_SUFFIX "-esp32")
+set(CODENAME "esp32s3")
+set(GIT_STR "esp32")
+# Optional tag left undefined for #cmakedefine
+configure_file(
+  "${RADIO_SRC}/stamp.h.in"
+  "${GEN_DIR}/stamp.h"
+  @ONLY
+)
+
 set(GEN_TEMPLATES
   hal_settings:hal_settings.h
   hal_keys:hal_keys.inc
